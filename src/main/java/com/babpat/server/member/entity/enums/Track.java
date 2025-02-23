@@ -3,8 +3,6 @@ package com.babpat.server.member.entity.enums;
 import com.babpat.server.common.enums.CustomResponseStatus;
 import com.babpat.server.common.exception.CustomException;
 
-import java.util.Arrays;
-
 public enum Track {
     FULLSTACK,
     CLOUD,

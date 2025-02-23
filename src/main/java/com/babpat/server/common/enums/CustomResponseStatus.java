@@ -10,6 +10,8 @@ public enum CustomResponseStatus {
 
     INVALID_TRACK(HttpStatus.BAD_REQUEST.value(), "존재하지 않는 트랙입니다."),
 
+    MEMBER_NOT_EXIST(HttpStatus.NOT_FOUND.value(), "존재하지 않는 회원입니다."),
+
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR.value(), "내부 서버 오류입니다."),
     ;
 
