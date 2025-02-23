@@ -6,12 +6,15 @@ import com.babpat.server.member.entity.enums.Track;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.DynamicInsert;
 
 @Entity
 @Getter
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
+@DynamicInsert
 @Table(name = "member")
 public class Member extends BaseEntity {
     @Id
@@ -36,5 +39,6 @@ public class Member extends BaseEntity {
     private Track track;
 
     @Enumerated(EnumType.STRING)
-    private BaseStatus memberStatus;
+    @ColumnDefault("'ACTIVATE'")
+    private BaseStatus baseStatus;
 }
