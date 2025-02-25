@@ -16,10 +16,15 @@ public enum CustomResponseStatus {
     ;
 
     private final int httpStatusCode;
-    private final String message;
+    private String message;
 
     CustomResponseStatus(int httpStatusCode, String message) {
         this.httpStatusCode = httpStatusCode;
         this.message = message;
+    }
+
+    public CustomResponseStatus withMessage(String customMessage) {
+        this.message = customMessage;
+        return this;
     }
 }
