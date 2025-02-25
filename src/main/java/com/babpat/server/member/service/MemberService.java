@@ -8,6 +8,7 @@ import com.babpat.server.member.dto.request.SignupRequestDto;
 import com.babpat.server.member.dto.response.IdCheckRespDto;
 import com.babpat.server.member.dto.response.SignInResponseDto;
 import com.babpat.server.member.entity.Member;
+import com.babpat.server.member.entity.enums.Track;
 import com.babpat.server.member.repository.MemberRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -20,8 +21,15 @@ public class MemberService {
 
     @Transactional
     public void register(SignupRequestDto requestDto) {
-        Member member = requestDto.toEntity();
-        memberRepository.save(member);
+        if (memberRepository.existsByNicknameAndNameAndTrack(
+                requestDto.names().nickname(),
+                requestDto.names().name(),
+                Track.fromString(requestDto.track()))
+        ) {
+            throw new CustomException(CustomResponseStatus.MEMBER_ALREADY_EXIST);
+        }
+
+        memberRepository.save(requestDto.toEntity());
     }
 
     @Transactional

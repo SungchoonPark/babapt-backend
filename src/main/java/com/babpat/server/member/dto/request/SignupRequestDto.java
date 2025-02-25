@@ -15,8 +15,6 @@ public record SignupRequestDto(
     ) {}
 
     public Member toEntity() {
-        Track track1 = Track.fromString(track);
-        System.out.println(track1);
         return Member.builder()
                 .name(names.name)
                 .nickname(names.nickname)

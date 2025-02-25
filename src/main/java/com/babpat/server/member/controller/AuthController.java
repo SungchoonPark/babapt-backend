@@ -27,7 +27,7 @@ public class AuthController {
     public ResponseEntity<ApiResponse<?>> register(@RequestBody SignupRequestDto requestDto) {
         memberService.register(requestDto);
 
-        return ResponseEntity.ok().body(ApiResponse.createSuccessWithNoContent(CustomResponseStatus.SUCCESS_WITH_NO_CONTENT));
+        return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/login")
