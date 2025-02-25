@@ -2,8 +2,10 @@ package com.babpat.server.member.controller;
 
 import com.babpat.server.common.dto.ApiResponse;
 import com.babpat.server.common.enums.CustomResponseStatus;
+import com.babpat.server.member.dto.request.IdCheckRequestDto;
 import com.babpat.server.member.dto.request.SignInRequestDto;
 import com.babpat.server.member.dto.request.SignupRequestDto;
+import com.babpat.server.member.dto.response.IdCheckRespDto;
 import com.babpat.server.member.dto.response.SignInResponseDto;
 import com.babpat.server.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
@@ -33,5 +35,15 @@ public class AuthController {
         SignInResponseDto response = memberService.login(signInRequestDto);
 
         return ResponseEntity.ok().body(ApiResponse.createSuccess(response, CustomResponseStatus.SUCCESS));
+    }
+
+    @PostMapping("/duplicate")
+    public ResponseEntity<ApiResponse<IdCheckRespDto>> checkIdExists(@RequestBody IdCheckRequestDto idCheckRequestDto) {
+        IdCheckRespDto response = memberService.isExistId(idCheckRequestDto);
+
+        return ResponseEntity.ok().body(ApiResponse.createSuccess(
+                response,
+                CustomResponseStatus.SUCCESS.withMessage("아이디 사용가능 여부 확인에 성공하였습니다."))
+        );
     }
 }

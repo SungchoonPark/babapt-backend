@@ -2,8 +2,10 @@ package com.babpat.server.member.service;
 
 import com.babpat.server.common.enums.CustomResponseStatus;
 import com.babpat.server.common.exception.CustomException;
+import com.babpat.server.member.dto.request.IdCheckRequestDto;
 import com.babpat.server.member.dto.request.SignInRequestDto;
 import com.babpat.server.member.dto.request.SignupRequestDto;
+import com.babpat.server.member.dto.response.IdCheckRespDto;
 import com.babpat.server.member.dto.response.SignInResponseDto;
 import com.babpat.server.member.entity.Member;
 import com.babpat.server.member.repository.MemberRepository;
@@ -28,5 +30,11 @@ public class MemberService {
                 .orElseThrow(() -> new CustomException(CustomResponseStatus.MEMBER_NOT_EXIST));
 
         return new SignInResponseDto(member.getName(), member.getNickname(), member.getTrack());
+    }
+
+    @Transactional
+    public IdCheckRespDto isExistId(IdCheckRequestDto requestDto) {
+        boolean isExist = memberRepository.findByUsername(requestDto.id()).isPresent();
+        return new IdCheckRespDto(isExist);
     }
 }
