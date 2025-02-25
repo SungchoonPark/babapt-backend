@@ -37,7 +37,7 @@ public class MemberService {
         Member member = memberRepository.findByUsernameAndPassword(signInRequestDto.id(), signInRequestDto.password())
                 .orElseThrow(() -> new CustomException(CustomResponseStatus.MEMBER_NOT_EXIST));
 
-        return new SignInResponseDto(member.getName(), member.getNickname(), member.getTrack());
+        return new SignInResponseDto(member.getId(), member.getName(), member.getNickname(), member.getTrack());
     }
 
     @Transactional

@@ -34,7 +34,10 @@ public class AuthController {
     public ResponseEntity<ApiResponse<SignInResponseDto>> login(@RequestBody SignInRequestDto signInRequestDto) {
         SignInResponseDto response = memberService.login(signInRequestDto);
 
-        return ResponseEntity.ok().body(ApiResponse.createSuccess(response, CustomResponseStatus.SUCCESS));
+        return ResponseEntity.ok().body(ApiResponse.createSuccess(
+                response,
+                CustomResponseStatus.SUCCESS.withMessage("로그인 성공"))
+        );
     }
 
     @PostMapping("/duplicate")
