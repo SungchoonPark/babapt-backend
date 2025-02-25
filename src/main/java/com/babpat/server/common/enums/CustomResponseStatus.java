@@ -13,6 +13,8 @@ public enum CustomResponseStatus {
     MEMBER_NOT_EXIST(HttpStatus.NOT_FOUND.value(), "존재하지 않는 회원입니다."),
     MEMBER_ALREADY_EXIST(HttpStatus.CONFLICT.value(), "이미 존재하는 회원입니다."),
 
+    BABPAT_ALREADY_EXIST(HttpStatus.CONTINUE.value(), "이미 밥팟에 참여하고 있습니다."),
+
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR.value(), "내부 서버 오류입니다."),
     ;
 

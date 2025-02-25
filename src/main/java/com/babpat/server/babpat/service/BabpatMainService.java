@@ -1,6 +1,8 @@
 package com.babpat.server.babpat.service;
 
 import com.babpat.server.babpat.dto.request.BabpatPostReqDto;
+import com.babpat.server.common.enums.CustomResponseStatus;
+import com.babpat.server.common.exception.CustomException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,11 +17,14 @@ public class BabpatMainService {
 
     @Transactional
     public void postBabpat(BabpatPostReqDto babpatPostReqDto) {
-        // 1. 이미 참가한 밥팟이 있는지 확인
-        // babpatService.isExistBabpatByDateTime();
-
-        // 2. 참여한 밥팟이 없다면 통과했으면 저장하기
-        // participationService.isExistParticipationByDateTime();
+        // 1. 일정 시간안에 참여한 밥팟이 없는지 체크하기 -> 없다면 저장하기
+        if (participationService.isExistParticipationByDateTime(
+                babpatPostReqDto.leader(),
+                babpatPostReqDto.date(),
+                babpatPostReqDto.time())
+        ) {
+            throw new CustomException(CustomResponseStatus.BABPAT_ALREADY_EXIST);
+        }
 
         // 1. babpat에 저장
         Long babpatId = babpatService.registerBabpat(babpatPostReqDto);
