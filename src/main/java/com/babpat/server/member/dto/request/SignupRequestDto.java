@@ -2,6 +2,7 @@ package com.babpat.server.member.dto.request;
 
 import com.babpat.server.member.entity.Member;
 import com.babpat.server.member.entity.enums.Track;
+import com.babpat.server.util.PasswordUtil;
 
 public record SignupRequestDto(
         NamesDto names,
@@ -19,7 +20,7 @@ public record SignupRequestDto(
                 .name(names.name)
                 .nickname(names.nickname)
                 .username(id)
-                .password(password) // Todo : 비밀번호 암호화 진행해야함
+                .password(PasswordUtil.hashPassword(password))
                 .track(Track.fromString(track))
                 .build();
     }

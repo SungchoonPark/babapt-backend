@@ -10,6 +10,7 @@ import com.babpat.server.member.dto.response.SignInResponseDto;
 import com.babpat.server.member.entity.Member;
 import com.babpat.server.member.entity.enums.Track;
 import com.babpat.server.member.repository.MemberRepository;
+import com.babpat.server.util.PasswordUtil;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -34,8 +35,12 @@ public class MemberService {
 
     @Transactional
     public SignInResponseDto login(SignInRequestDto signInRequestDto) {
-        Member member = memberRepository.findByUsernameAndPassword(signInRequestDto.id(), signInRequestDto.password())
+        Member member = memberRepository.findByUsername(signInRequestDto.id())
                 .orElseThrow(() -> new CustomException(CustomResponseStatus.MEMBER_NOT_EXIST));
+
+        if (!PasswordUtil.isSamePassword(signInRequestDto.password(), member.getPassword())) {
+            throw new CustomException(CustomResponseStatus.MEMBER_NOT_EXIST);
+        }
 
         return new SignInResponseDto(member.getId(), member.getName(), member.getNickname(), member.getTrack());
     }
