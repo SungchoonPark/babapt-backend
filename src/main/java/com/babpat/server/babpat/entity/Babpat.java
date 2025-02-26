@@ -1,5 +1,6 @@
 package com.babpat.server.babpat.entity;
 
+import com.babpat.server.babpat.entity.enums.MealSpeed;
 import com.babpat.server.common.model.BaseEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -39,4 +40,7 @@ public class Babpat extends BaseEntity {
 
     @NotNull
     private LocalTime patTime;
+
+    @Enumerated(EnumType.STRING)
+    private MealSpeed mealSpeed;
 }

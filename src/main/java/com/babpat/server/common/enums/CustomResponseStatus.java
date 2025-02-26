@@ -9,6 +9,7 @@ public enum CustomResponseStatus {
     SUCCESS_WITH_NO_CONTENT(HttpStatus.NO_CONTENT.value() , "요청에 성공하였습니다."),
 
     INVALID_TRACK(HttpStatus.BAD_REQUEST.value(), "존재하지 않는 트랙입니다."),
+    INVALID_MEAL_SPEED(HttpStatus.BAD_REQUEST.value(), "유효하지 않는 식사속도입니다."),
 
     MEMBER_NOT_EXIST(HttpStatus.NOT_FOUND.value(), "존재하지 않는 회원입니다."),
     MEMBER_ALREADY_EXIST(HttpStatus.CONFLICT.value(), "이미 존재하는 회원입니다."),
