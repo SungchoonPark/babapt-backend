@@ -1,6 +1,7 @@
 package com.babpat.server.babpat.controller;
 
 import com.babpat.server.babpat.dto.request.BabpatPostReqDto;
+import com.babpat.server.babpat.dto.response.BabpatInfoRespDto;
 import com.babpat.server.babpat.service.BabpatMainService;
 import com.babpat.server.common.dto.ApiResponse;
 import com.babpat.server.common.enums.CustomResponseStatus;
@@ -23,11 +24,11 @@ public class BabpatController {
         return ResponseEntity.ok().body(ApiResponse.createSuccessWithNoContent(CustomResponseStatus.SUCCESS_WITH_NO_CONTENT));
     }
 
-//    @GetMapping("/post")
-//    public ResponseEntity<ApiResponse<>> getBabpat() {
-//        babpatMainService.getBabpat();
-//
-//        return ResponseEntity.ok().body(ApiResponse.createSuccess(CustomResponseStatus.SUCCESS));
-//    }
+    @GetMapping("/post")
+    public ResponseEntity<ApiResponse<BabpatInfoRespDto>> getBabpat() {
+        BabpatInfoRespDto response = babpatMainService.getBabpat();
+
+        return ResponseEntity.ok().body(ApiResponse.createSuccess(response, CustomResponseStatus.SUCCESS));
+    }
 
 }

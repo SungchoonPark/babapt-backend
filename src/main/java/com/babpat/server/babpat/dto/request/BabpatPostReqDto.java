@@ -8,7 +8,7 @@ import java.time.LocalTime;
 
 public record BabpatPostReqDto(
         Long leader,
-        String place,
+        Long place,
         LocalDate date,
         LocalTime time,
         Integer headCount,
@@ -19,7 +19,7 @@ public record BabpatPostReqDto(
     public Babpat toBabpat() {
         return Babpat.builder()
                 .leaderId(leader)
-                .placeId(place)
+                .restaurantId(place)
                 .comment(comment)
                 .headCount(headCount)
                 .patDate(date)

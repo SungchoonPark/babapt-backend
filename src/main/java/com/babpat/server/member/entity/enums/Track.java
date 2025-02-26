@@ -9,7 +9,7 @@ public enum Track {
     AI;
 
     public static Track fromString(String track) {
-        return switch (track.toLowerCase()) {
+        return switch (track) {
             case "FULLSTACK" -> FULLSTACK;
             case "CLOUD" -> CLOUD;
             case "AI" -> AI;

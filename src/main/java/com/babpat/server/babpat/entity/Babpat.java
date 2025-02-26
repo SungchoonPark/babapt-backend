@@ -27,7 +27,7 @@ public class Babpat extends BaseEntity {
     private Long leaderId;
 
     @NotNull
-    private String placeId;
+    private Long restaurantId;
 
     @NotNull
     private String comment;

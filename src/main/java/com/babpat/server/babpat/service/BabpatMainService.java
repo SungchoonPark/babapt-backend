@@ -1,6 +1,7 @@
 package com.babpat.server.babpat.service;
 
 import com.babpat.server.babpat.dto.request.BabpatPostReqDto;
+import com.babpat.server.babpat.dto.response.BabpatInfoRespDto;
 import com.babpat.server.common.enums.CustomResponseStatus;
 import com.babpat.server.common.exception.CustomException;
 import jakarta.transaction.Transactional;
@@ -30,5 +31,9 @@ public class BabpatMainService {
         Long babpatId = babpatService.registerBabpat(babpatPostReqDto);
         // 2. participation에 저장
         participationService.registerParticipation(babpatId, babpatPostReqDto);
+    }
+
+    public BabpatInfoRespDto getBabpat() {
+        return babpatService.getBabpat();
     }
 }
