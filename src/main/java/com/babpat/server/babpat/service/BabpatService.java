@@ -4,6 +4,7 @@ import com.babpat.server.babpat.dto.request.BabpatPostReqDto;
 import com.babpat.server.babpat.dto.response.BabpatInfoRespDto;
 import com.babpat.server.babpat.entity.Babpat;
 import com.babpat.server.babpat.repository.BabpatRepository;
+import com.babpat.server.babpat.repository.ParticipationRepository;
 import com.babpat.server.common.enums.CustomResponseStatus;
 import com.babpat.server.common.exception.CustomException;
 import com.babpat.server.member.entity.Member;
@@ -24,6 +25,7 @@ public class BabpatService {
     private final BabpatRepository babpatRepository;
     private final RestaurantRepository restaurantRepository;
     private final MemberRepository memberRepository;
+    private final ParticipationRepository participationRepository;
 
     public Long registerBabpat(BabpatPostReqDto babpatPostReqDto) {
         Babpat babpat = babpatRepository.save(babpatPostReqDto.toBabpat());
@@ -58,7 +60,7 @@ public class BabpatService {
                                     babpat.getComment(),
                                     new BabpatInfoRespDto.Capacity(
                                             babpat.getHeadCount(),
-                                            1 // Todo : 현재 인원 계산해서 넣어줘야함.
+                                            participationRepository.countByBabpatId(babpat.getId()).intValue()
                                     ),
                                     babpat.getMealSpeed(),
                                     babpat.getPatDate(),

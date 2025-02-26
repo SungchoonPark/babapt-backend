@@ -7,6 +7,5 @@ public record SignInResponseDto(
         String name,
         String nickname,
         Track track
-        // Todo : 추후 선호 키워드(preference) 리턴해줘야함
 ) {
 }
