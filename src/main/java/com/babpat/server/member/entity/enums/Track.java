@@ -10,9 +10,9 @@ public enum Track {
 
     public static Track fromString(String track) {
         return switch (track.toLowerCase()) {
-            case "fullstack" -> FULLSTACK;
-            case "cloud" -> CLOUD;
-            case "ai" -> AI;
+            case "FULLSTACK" -> FULLSTACK;
+            case "CLOUD" -> CLOUD;
+            case "AI" -> AI;
             default -> throw new CustomException(CustomResponseStatus.INVALID_TRACK);
         };
     }
