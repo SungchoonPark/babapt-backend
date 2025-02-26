@@ -2,17 +2,19 @@ package com.babpat.server.babpat.dto.request;
 
 import com.babpat.server.babpat.entity.Babpat;
 import com.babpat.server.babpat.entity.enums.MealSpeed;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 
 public record BabpatPostReqDto(
-        Long leader,
-        Long place,
-        LocalDate date,
-        LocalTime time,
-        Integer headCount,
-        String comment,
+        @NotNull Long leader,
+        @NotNull Long place,
+        @NotNull LocalDate date,
+        @NotNull LocalTime time,
+        @NotNull Integer headCount,
+        @NotBlank String comment,
         String mealSpeed
 ) {
 

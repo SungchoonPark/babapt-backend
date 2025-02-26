@@ -6,6 +6,7 @@ import com.babpat.server.babpat.dto.response.BabpatInfoRespDto;
 import com.babpat.server.babpat.service.BabpatMainService;
 import com.babpat.server.common.dto.ApiResponse;
 import com.babpat.server.common.enums.CustomResponseStatus;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +20,7 @@ public class BabpatController {
     private final BabpatMainService babpatMainService;
 
     @PostMapping("/post")
-    public ResponseEntity<ApiResponse<Void>> postBabpat(@RequestBody BabpatPostReqDto babpatPostReqDto) {
+    public ResponseEntity<ApiResponse<Void>> postBabpat(@RequestBody @Valid BabpatPostReqDto babpatPostReqDto) {
         babpatMainService.postBabpat(babpatPostReqDto);
 
         return ResponseEntity.ok().body(ApiResponse.createSuccessWithNoContent(CustomResponseStatus.SUCCESS_WITH_NO_CONTENT));
@@ -33,7 +34,7 @@ public class BabpatController {
     }
 
     @PostMapping("/post/apply")
-    public ResponseEntity<ApiResponse<Void>> applyBabpat(@RequestBody BabpatApplyRequest applyRequest) {
+    public ResponseEntity<ApiResponse<Void>> applyBabpat(@RequestBody @Valid BabpatApplyRequest applyRequest) {
         babpatMainService.applyBabpat(applyRequest);
 
         return ResponseEntity.ok().body(ApiResponse.createSuccessWithNoContent(CustomResponseStatus.SUCCESS_WITH_NO_CONTENT.withMessage("밥팟 신청이 완료되었습니다.")));

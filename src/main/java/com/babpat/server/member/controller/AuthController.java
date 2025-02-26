@@ -42,7 +42,7 @@ public class AuthController {
     }
 
     @PostMapping("/duplicate")
-    public ResponseEntity<ApiResponse<IdCheckRespDto>> checkIdExists(@RequestBody IdCheckRequestDto idCheckRequestDto) {
+    public ResponseEntity<ApiResponse<IdCheckRespDto>> checkIdExists(@RequestBody @Valid IdCheckRequestDto idCheckRequestDto) {
         IdCheckRespDto response = memberService.isExistId(idCheckRequestDto);
 
         return ResponseEntity.ok().body(ApiResponse.createSuccess(

@@ -1,10 +1,11 @@
 package com.babpat.server.babpat.dto.request;
 
 import com.babpat.server.babpat.entity.Participation;
+import jakarta.validation.constraints.NotNull;
 
 public record BabpatApplyRequest(
-        Long userId,
-        Long babpatId
+        @NotNull Long userId,
+        @NotNull Long babpatId
 ) {
 
     public Participation toEntity() {

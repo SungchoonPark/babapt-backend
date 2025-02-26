@@ -58,7 +58,7 @@ public class BabpatService {
                                     babpat.getComment(),
                                     new BabpatInfoRespDto.Capacity(
                                             babpat.getHeadCount(),
-                                            1
+                                            1 // Todo : 현재 인원 계산해서 넣어줘야함.
                                     ),
                                     babpat.getMealSpeed(),
                                     babpat.getPatDate(),

@@ -1,7 +1,9 @@
 package com.babpat.server.member.dto.request;
 
+import jakarta.validation.constraints.NotBlank;
+
 public record SignInRequestDto(
-        String id,
-        String password
+        @NotBlank String id,
+        @NotBlank String password
 ) {
 }
