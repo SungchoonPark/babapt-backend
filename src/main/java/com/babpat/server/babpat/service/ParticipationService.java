@@ -1,8 +1,11 @@
 package com.babpat.server.babpat.service;
 
+import com.babpat.server.babpat.dto.request.BabpatApplyRequest;
 import com.babpat.server.babpat.dto.request.BabpatPostReqDto;
 import com.babpat.server.babpat.entity.Participation;
 import com.babpat.server.babpat.repository.ParticipationRepository;
+import com.babpat.server.common.enums.CustomResponseStatus;
+import com.babpat.server.common.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -30,5 +33,19 @@ public class ParticipationService {
         LocalTime endTime = patTime.plusHours(1);
 
         return participationRepository.existsParticipationWithinOneHour(memberId, patDate, startTime, endTime);
+    }
+
+    public void applyBabpat(int headCount, BabpatApplyRequest applyRequest) {
+        if (participationRepository.existsByBabpatIdAndMemberId(applyRequest.babpatId(), applyRequest.userId())) {
+            throw new CustomException(CustomResponseStatus.ALREADY_PARTICIPATION);
+        }
+
+        Long filledSlots = participationRepository.countByBabpatId(applyRequest.babpatId());
+
+        if (headCount - filledSlots <= 0) {
+            throw new CustomException(CustomResponseStatus.BABPAT_CLOSED);
+        }
+
+        participationRepository.save(applyRequest.toEntity());
     }
 }

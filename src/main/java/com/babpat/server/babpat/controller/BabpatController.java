@@ -1,5 +1,6 @@
 package com.babpat.server.babpat.controller;
 
+import com.babpat.server.babpat.dto.request.BabpatApplyRequest;
 import com.babpat.server.babpat.dto.request.BabpatPostReqDto;
 import com.babpat.server.babpat.dto.response.BabpatInfoRespDto;
 import com.babpat.server.babpat.service.BabpatMainService;
@@ -18,7 +19,7 @@ public class BabpatController {
     private final BabpatMainService babpatMainService;
 
     @PostMapping("/post")
-    public ResponseEntity<ApiResponse<?>> postBabpat(@RequestBody BabpatPostReqDto babpatPostReqDto) {
+    public ResponseEntity<ApiResponse<Void>> postBabpat(@RequestBody BabpatPostReqDto babpatPostReqDto) {
         babpatMainService.postBabpat(babpatPostReqDto);
 
         return ResponseEntity.ok().body(ApiResponse.createSuccessWithNoContent(CustomResponseStatus.SUCCESS_WITH_NO_CONTENT));
@@ -29,6 +30,13 @@ public class BabpatController {
         BabpatInfoRespDto response = babpatMainService.getBabpat();
 
         return ResponseEntity.ok().body(ApiResponse.createSuccess(response, CustomResponseStatus.SUCCESS));
+    }
+
+    @PostMapping("/post/apply")
+    public ResponseEntity<ApiResponse<Void>> applyBabpat(@RequestBody BabpatApplyRequest applyRequest) {
+        babpatMainService.applyBabpat(applyRequest);
+
+        return ResponseEntity.ok().body(ApiResponse.createSuccessWithNoContent(CustomResponseStatus.SUCCESS_WITH_NO_CONTENT.withMessage("밥팟 신청이 완료되었습니다.")));
     }
 
 }

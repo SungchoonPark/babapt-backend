@@ -1,7 +1,9 @@
 package com.babpat.server.babpat.service;
 
+import com.babpat.server.babpat.dto.request.BabpatApplyRequest;
 import com.babpat.server.babpat.dto.request.BabpatPostReqDto;
 import com.babpat.server.babpat.dto.response.BabpatInfoRespDto;
+import com.babpat.server.babpat.entity.Babpat;
 import com.babpat.server.common.enums.CustomResponseStatus;
 import com.babpat.server.common.exception.CustomException;
 import jakarta.transaction.Transactional;
@@ -35,5 +37,14 @@ public class BabpatMainService {
 
     public BabpatInfoRespDto getBabpat() {
         return babpatService.getBabpat();
+    }
+
+    public void applyBabpat(BabpatApplyRequest applyRequest) {
+        Babpat babpat = getBabpatDetail(applyRequest.babpatId());
+        participationService.applyBabpat(babpat.getHeadCount(), applyRequest);
+    }
+
+    public Babpat getBabpatDetail(Long babpatId) {
+        return babpatService.getBabpatDetail(babpatId);
     }
 }

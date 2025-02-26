@@ -82,4 +82,9 @@ public class BabpatService {
                 .filter(s -> !s.isEmpty())
                 .collect(Collectors.toList());
     }
+
+    public Babpat getBabpatDetail(Long babpatId) {
+        return babpatRepository.findById(babpatId)
+                .orElseThrow(() -> new CustomException(CustomResponseStatus.BABPAT_NOT_EXIST));
+    }
 }

@@ -24,4 +24,8 @@ public interface ParticipationRepository extends JpaRepository<Participation, Lo
             @Param("startTime") LocalTime startTime,
             @Param("endTime") LocalTime endTime
     );
+
+    boolean existsByBabpatIdAndMemberId(Long babpatId, Long memberId);
+
+    Long countByBabpatId(Long babpatId);
 }
