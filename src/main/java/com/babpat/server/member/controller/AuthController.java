@@ -8,6 +8,7 @@ import com.babpat.server.member.dto.request.SignupRequestDto;
 import com.babpat.server.member.dto.response.IdCheckRespDto;
 import com.babpat.server.member.dto.response.SignInResponseDto;
 import com.babpat.server.member.service.MemberService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -24,14 +25,14 @@ public class AuthController {
     private final MemberService memberService;
 
     @PostMapping("/register")
-    public ResponseEntity<ApiResponse<?>> register(@RequestBody SignupRequestDto requestDto) {
+    public ResponseEntity<ApiResponse<Void>> register(@RequestBody @Valid SignupRequestDto requestDto) {
         memberService.register(requestDto);
 
         return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/login")
-    public ResponseEntity<ApiResponse<SignInResponseDto>> login(@RequestBody SignInRequestDto signInRequestDto) {
+    public ResponseEntity<ApiResponse<SignInResponseDto>> login(@RequestBody @Valid SignInRequestDto signInRequestDto) {
         SignInResponseDto response = memberService.login(signInRequestDto);
 
         return ResponseEntity.ok().body(ApiResponse.createSuccess(

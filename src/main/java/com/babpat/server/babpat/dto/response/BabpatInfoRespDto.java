@@ -23,6 +23,7 @@ public record BabpatInfoRespDto(
     ) {}
 
     public record BabpatInfo(
+            Long id,
             String comment,
             Capacity capacity,
             MealSpeed mealSpeed,

@@ -3,17 +3,20 @@ package com.babpat.server.member.dto.request;
 import com.babpat.server.member.entity.Member;
 import com.babpat.server.member.entity.enums.Track;
 import com.babpat.server.util.PasswordUtil;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 
 public record SignupRequestDto(
-        NamesDto names,
-        String id,
-        String password,
-        String track
+        @Valid NamesDto names,
+        @NotBlank String id,
+        @NotBlank String password,
+        @NotBlank String track
 ) {
     public record NamesDto(
-            String nickname,
-            String name
-    ) {}
+            @NotBlank String nickname,
+            @NotBlank String name
+    ) {
+    }
 
     public Member toEntity() {
         return Member.builder()

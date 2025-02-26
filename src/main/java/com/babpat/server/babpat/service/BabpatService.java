@@ -54,6 +54,7 @@ public class BabpatService {
                             ),
 
                             new BabpatInfoRespDto.BabpatInfo(
+                                    babpat.getId(),
                                     babpat.getComment(),
                                     new BabpatInfoRespDto.Capacity(
                                             babpat.getHeadCount(),
