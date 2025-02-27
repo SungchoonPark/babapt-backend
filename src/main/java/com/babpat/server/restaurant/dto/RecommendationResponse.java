@@ -10,6 +10,7 @@ public record RecommendationResponse(
             String name,
             String mainMenus,
             List<String> categories,
-            String thumbnailUrl
+            String thumbnailUrl,
+            Boolean isPromotion
     ) {}
 }

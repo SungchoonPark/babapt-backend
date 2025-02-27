@@ -21,7 +21,9 @@ public class RestaurantService {
         List<Long> ids = List.of(92L, 130L, 20L, 12L);
         List<RecommendationResponse.RestaurantInfo> restaurantInfos = new ArrayList<>();
 
+        int count = 0;
         for (Long id : ids) {
+            count++;
             Restaurant restaurant = restaurantRepository.findById(id)
                     .orElseThrow(() -> new CustomException(CustomResponseStatus.RESTAURANT_NOT_EXIST));
 
@@ -29,7 +31,8 @@ public class RestaurantService {
                     restaurant.getName(),
                     String.valueOf(restaurant.getMenus()),
                     parsingCategories(restaurant.getCategory1(), restaurant.getCategory2()),
-                    restaurant.getThumbnail()
+                    restaurant.getThumbnail(),
+                    count > 2
             ));
 
         }
