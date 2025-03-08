@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main  # main 브랜치에 푸시될 때 실행됨
-#  workflow_dispatch:  # 수동 실행 가능
 
 jobs:
   build-and-deploy:
@@ -55,18 +54,17 @@ jobs:
             echo "🔹 EC2 접속 성공. Docker 컨테이너 배포 시작..."
           
             # 최신 Docker 이미지 Pull (새로운 태그 사용)
-            IMAGE_TAG=$(docker images | grep '${{ secrets.DOCKER_USERNAME }}/babpat-backend' | awk '{print $2}' | head -n 1)
-            echo "🔹 최신 Docker 이미지: $IMAGE_TAG"
-            docker pull ${{ secrets.DOCKER_USERNAME }}/babpat-backend:$IMAGE_TAG
+            IMAGE_TAG=${{ secrets.DOCKER_USERNAME }}/babpat-backend:$IMAGE_TAG
+            docker pull $IMAGE_TAG
 
             # 새 컨테이너 실행 (기존 컨테이너 중단 없이)
             echo "🔹 새 컨테이너 실행..."
             docker run -d --name babpat-backend-new -p 8080:8080 \
-              -e DB_URL=${{ secrets.DB_URL }} \
-              -e DB_USERNAME=${{ secrets.DB_USERNAME }} \
-              -e DB_PASSWORD=${{ secrets.DB_PASSWORD }} \
+              -e DB_URL="${{ secrets.DB_URL }}" \
+              -e DB_USERNAME="${{ secrets.DB_USERNAME }}" \
+              -e DB_PASSWORD="${{ secrets.DB_PASSWORD }}" \
               --restart unless-stopped \
-              ${{ secrets.DOCKER_USERNAME }}/babpat-backend:$IMAGE_TAG
+              $IMAGE_TAG
 
             # 새 컨테이너가 정상적으로 실행될 때까지 대기
             echo "🔹 새 컨테이너 실행 확인 중..."
