@@ -1,0 +1,92 @@
+name: Deploy Spring Boot App with Gradle and Docker
+
+on:
+  push:
+    branches:
+      - main  # main 브랜치에 푸시될 때 실행됨
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: Grant execute permission to Gradle
+        run: chmod +x gradlew
+
+      - name: Build with Gradle (Without Tests)
+        run: ./gradlew clean build -x test
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build and Push Docker Image
+        run: |
+          IMAGE_TAG=$(date +%Y%m%d%H%M%S)
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/babpat-backend:$IMAGE_TAG .
+          docker tag ${{ secrets.DOCKER_USERNAME }}/babpat-backend:$IMAGE_TAG ${{ secrets.DOCKER_USERNAME }}/babpat-backend:latest
+          docker push ${{ secrets.DOCKER_USERNAME }}/babpat-backend:$IMAGE_TAG
+          docker push ${{ secrets.DOCKER_USERNAME }}/babpat-backend:latest
+
+      - name: Save SSH Key (PEM)
+        run: |
+          echo "${{ secrets.EC2_SSH_KEY }}" | base64 --decode > key.pem
+          chmod 600 key.pem
+
+      - name: Deploy to EC2 (Zero Downtime)
+        run: |
+          ssh -o StrictHostKeyChecking=no -i key.pem ubuntu@${{ secrets.EC2_HOST }} << 'EOF'
+            echo "🔹 EC2 접속 성공. Docker 컨테이너 배포 시작..."
+          
+            # 최신 Docker 이미지 Pull (새로운 태그 사용)
+            IMAGE_TAG=$(docker images | grep '${{ secrets.DOCKER_USERNAME }}/babpat-backend' | awk '{print $2}' | head -n 1)
+            echo "🔹 최신 Docker 이미지: $IMAGE_TAG"
+            docker pull ${{ secrets.DOCKER_USERNAME }}/babpat-backend:$IMAGE_TAG
+
+            # 새 컨테이너 실행 (기존 컨테이너 중단 없이)
+            echo "🔹 새 컨테이너 실행..."
+            docker run -d --name babpat-backend-new -p 8080:8080 \
+              -e DB_URL=${{ secrets.DB_URL }} \
+              -e DB_USERNAME=${{ secrets.DB_USERNAME }} \
+              -e DB_PASSWORD=${{ secrets.DB_PASSWORD }} \
+              --restart unless-stopped \
+              ${{ secrets.DOCKER_USERNAME }}/babpat-backend:$IMAGE_TAG
+
+            # 새 컨테이너가 정상적으로 실행될 때까지 대기
+            echo "🔹 새 컨테이너 실행 확인 중..."
+            sleep 10
+            NEW_CONTAINER_STATUS=$(docker inspect -f '{{.State.Health.Status}}' babpat-backend-new || echo "healthy")
+            if [ "$NEW_CONTAINER_STATUS" != "healthy" ]; then
+              echo "❌ 새 컨테이너가 정상 실행되지 않음! 롤백 중..."
+              docker stop babpat-backend-new
+              docker rm babpat-backend-new
+              exit 1
+            fi
+
+            # 기존 컨테이너가 실행 중이면 중지 & 삭제
+            echo "🔹 기존 컨테이너 중지 및 삭제..."
+            docker stop babpat-backend || true
+            docker rm babpat-backend || true
+
+            # 새 컨테이너를 기존 이름으로 변경
+            echo "🔹 새 컨테이너를 기존 컨테이너로 교체..."
+            docker rename babpat-backend-new babpat-backend
+
+            # 실행 중인 컨테이너 확인
+            echo "🔹 실행 중인 컨테이너 목록:"
+            docker ps -a
+          EOF

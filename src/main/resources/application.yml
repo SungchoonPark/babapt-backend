@@ -1,0 +1,11 @@
+spring:
+  datasource:
+    url: ${DB_URL}  # 환경 변수로 설정
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+    show-sql: true
