@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main  # main 브랜치에 푸시될 때 실행됨
+workflow_dispatch:  # 이 부분을 추가하여 수동으로도 실행 가능하게 만듦
 
 jobs:
   build-and-deploy:
