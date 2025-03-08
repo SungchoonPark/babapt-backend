@@ -34,9 +34,9 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}  # GitHub Secrets에서 가져오기
           password: ${{ secrets.DOCKER_PASSWORD }}  # GitHub Secrets에서 가져오기
 
-      - name:
-          Debug: Check Docker Info
+      - name: Check Docker Info
         run: |
+          echo "🔹 Docker 실행 환경 확인 중..."
           docker info
           docker version
           docker images
@@ -56,7 +56,6 @@ jobs:
           # Docker Hub 푸시
           docker push $IMAGE_NAME || { echo "❌ Docker push 실패"; exit 1; }
           docker push ${{ secrets.DOCKER_USERNAME }}/babpat-backend:latest || { echo "❌ Docker push 실패"; exit 1; }
-      
 
       - name: Save SSH Key (PEM)
         run: |
@@ -68,13 +67,11 @@ jobs:
         run: |
           ssh -o StrictHostKeyChecking=no -i key.pem ubuntu@${{ secrets.EC2_HOST }} << 'EOF'
             echo "🔹 EC2 접속 성공. Docker 컨테이너 배포 시작..."
-
             echo "🔹 환경 변수 확인..."
             echo "DB_URL=${{ secrets.DB_URL }}"
             echo "DB_USERNAME=${{ secrets.DB_USERNAME }}"
             echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}"
             echo "DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }}"
-
             echo "🔹 최신 Docker 이미지 확인..."
             IMAGE_TAG=$(docker images | grep '${{ secrets.DOCKER_USERNAME }}/babpat-backend' | awk '{print $2}' | head -n 1)
             echo "IMAGE_TAG: $IMAGE_TAG"
@@ -82,14 +79,11 @@ jobs:
               echo "❌ Docker 이미지 태그가 비어 있음!"
               exit 1
             fi
-
             echo "🔹 최신 Docker 이미지 Pull..."
             docker pull ${{ secrets.DOCKER_USERNAME }}/babpat-backend:$IMAGE_TAG || { echo "❌ Docker Pull 실패"; exit 1; }
-
             echo "🔹 기존 컨테이너 중지 및 삭제..."
             docker stop babpat-backend || echo "⚠ 기존 컨테이너가 없음"
             docker rm babpat-backend || echo "⚠ 기존 컨테이너 삭제 불필요"
-
             echo "🔹 새 컨테이너 실행..."
             docker run -d --name babpat-backend -p 8080:8080 \
               -e DB_URL="${{ secrets.DB_URL }}" \
@@ -97,7 +91,6 @@ jobs:
               -e DB_PASSWORD="${{ secrets.DB_PASSWORD }}" \
               --restart unless-stopped \
               ${{ secrets.DOCKER_USERNAME }}/babpat-backend:$IMAGE_TAG || { echo "❌ Docker 실행 실패"; exit 1; }
-
             echo "🔹 실행 중인 컨테이너 확인:"
             docker ps -a
           EOF
