@@ -23,6 +23,8 @@ public class BabpatController {
     public ResponseEntity<ApiResponse<Void>> postBabpat(@RequestBody @Valid BabpatPostReqDto babpatPostReqDto) {
         babpatMainService.postBabpat(babpatPostReqDto);
 
+
+        System.out.println("test");
         return ResponseEntity.ok().body(ApiResponse.createSuccessWithNoContent(CustomResponseStatus.SUCCESS_WITH_NO_CONTENT));
     }
 
