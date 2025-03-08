@@ -64,7 +64,7 @@ jobs:
             # 새 컨테이너 실행 (기존 컨테이너 중단 없이)
             echo "🔹 새 컨테이너 실행..."
             docker run -d --name babpat-backend-new -p 8080:8080 \
-              -e DB_URL="${{ secrets.DB_URL }}" \
+              -e DB_URL="${{ secrets.DB_URL }}" \  # DB_URL 환경 변수 설정
               -e DB_USERNAME="${{ secrets.DB_USERNAME }}" \
               -e DB_PASSWORD="${{ secrets.DB_PASSWORD }}" \
               --restart unless-stopped \
