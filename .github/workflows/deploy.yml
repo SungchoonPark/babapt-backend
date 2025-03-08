@@ -37,9 +37,10 @@ jobs:
       - name: Build and Push Docker Image
         run: |
           IMAGE_TAG=$(date +%Y%m%d%H%M%S)  # 이미지 태그 생성
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/babpat-backend:$IMAGE_TAG .  # Docker 이미지 빌드
-          docker tag ${{ secrets.DOCKER_USERNAME }}/babpat-backend:$IMAGE_TAG ${{ secrets.DOCKER_USERNAME }}/babpat-backend:latest  # 최신 이미지 태그
-          docker push ${{ secrets.DOCKER_USERNAME }}/babpat-backend:$IMAGE_TAG  # Docker Hub에 푸시
+          IMAGE_NAME="${{ secrets.DOCKER_USERNAME }}/babpat-backend:$IMAGE_TAG"  # 이미지 이름과 태그를 명확하게 정의
+          docker build -t $IMAGE_NAME .  # Docker 이미지 빌드
+          docker tag $IMAGE_NAME ${{ secrets.DOCKER_USERNAME }}/babpat-backend:latest  # 최신 이미지 태그
+          docker push $IMAGE_NAME  # Docker Hub에 푸시
           docker push ${{ secrets.DOCKER_USERNAME }}/babpat-backend:latest  # 최신 이미지 푸시
 
       - name: Save SSH Key (PEM)
@@ -52,9 +53,12 @@ jobs:
           # EC2에 SSH로 접속하여 Docker 컨테이너 배포
           ssh -o StrictHostKeyChecking=no -i key.pem ubuntu@${{ secrets.EC2_HOST }} << 'EOF'
             echo "🔹 EC2 접속 성공. Docker 컨테이너 배포 시작..."
-          
-            # 최신 Docker 이미지 Pull (새로운 태그 사용)
+
+            # 이미지 태그 및 이름 설정
             IMAGE_TAG=${{ secrets.DOCKER_USERNAME }}/babpat-backend:$IMAGE_TAG
+            echo "🔹 최신 Docker 이미지: $IMAGE_TAG"
+
+            # 최신 Docker 이미지 Pull
             docker pull $IMAGE_TAG
 
             # 새 컨테이너 실행 (기존 컨테이너 중단 없이)
