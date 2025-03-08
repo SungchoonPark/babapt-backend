@@ -34,7 +34,8 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}  # GitHub Secrets에서 가져오기
           password: ${{ secrets.DOCKER_PASSWORD }}  # GitHub Secrets에서 가져오기
 
-      - name: Debug: Check Docker Info
+      - name:
+          Debug: Check Docker Info
         run: |
           docker info
           docker version
@@ -55,6 +56,7 @@ jobs:
           # Docker Hub 푸시
           docker push $IMAGE_NAME || { echo "❌ Docker push 실패"; exit 1; }
           docker push ${{ secrets.DOCKER_USERNAME }}/babpat-backend:latest || { echo "❌ Docker push 실패"; exit 1; }
+      
 
       - name: Save SSH Key (PEM)
         run: |
