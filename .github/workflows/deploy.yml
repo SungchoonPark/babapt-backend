@@ -34,39 +34,35 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}  # GitHub Secrets에서 가져오기
           password: ${{ secrets.DOCKER_PASSWORD }}  # GitHub Secrets에서 가져오기
 
-      - name: **Debug: Check Docker Info**
+      - name: Debug: Check Docker Info
         run: |
           docker info
           docker version
           docker images
           echo "🔹 Docker 실행 환경 확인 완료"
 
-      - name: **Build and Push Docker Image**
+      - name: Build and Push Docker Image
         run: |
           echo "🔹 Generating IMAGE_TAG..."
           IMAGE_TAG=$(date +%Y%m%d%H%M%S)  # 이미지 태그 생성
           IMAGE_NAME="${{ secrets.DOCKER_USERNAME }}/babpat-backend:$IMAGE_TAG"
-
           echo "🔹 IMAGE_TAG 확인: $IMAGE_TAG"
           echo "🔹 IMAGE_NAME 확인: $IMAGE_NAME"
-
           # Docker 이미지 빌드
           docker build -t $IMAGE_NAME . || { echo "❌ Docker build 실패"; exit 1; }
-
           # 최신 태그 적용
           docker tag $IMAGE_NAME ${{ secrets.DOCKER_USERNAME }}/babpat-backend:latest
-
           # Docker Hub 푸시
           docker push $IMAGE_NAME || { echo "❌ Docker push 실패"; exit 1; }
           docker push ${{ secrets.DOCKER_USERNAME }}/babpat-backend:latest || { echo "❌ Docker push 실패"; exit 1; }
 
-      - name: **Save SSH Key (PEM)**
+      - name: Save SSH Key (PEM)
         run: |
           echo "🔹 Decoding SSH Key..."
           echo "${{ secrets.EC2_SSH_KEY }}" | base64 --decode > key.pem || { echo "❌ SSH 키 복호화 실패"; exit 1; }
           chmod 600 key.pem  # 파일 권한 설정
 
-      - name: **Deploy to EC2 (Zero Downtime)**
+      - name: Deploy to EC2 (Zero Downtime)
         run: |
           ssh -o StrictHostKeyChecking=no -i key.pem ubuntu@${{ secrets.EC2_HOST }} << 'EOF'
             echo "🔹 EC2 접속 성공. Docker 컨테이너 배포 시작..."
@@ -80,7 +76,6 @@ jobs:
             echo "🔹 최신 Docker 이미지 확인..."
             IMAGE_TAG=$(docker images | grep '${{ secrets.DOCKER_USERNAME }}/babpat-backend' | awk '{print $2}' | head -n 1)
             echo "IMAGE_TAG: $IMAGE_TAG"
-
             if [ -z "$IMAGE_TAG" ]; then
               echo "❌ Docker 이미지 태그가 비어 있음!"
               exit 1
