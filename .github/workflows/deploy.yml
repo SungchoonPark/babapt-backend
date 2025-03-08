@@ -34,65 +34,73 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}  # GitHub Secrets에서 가져오기
           password: ${{ secrets.DOCKER_PASSWORD }}  # GitHub Secrets에서 가져오기
 
-      - name: Build and Push Docker Image
+      - name: **Debug: Check Docker Info**
         run: |
-          IMAGE_TAG=$(date +%Y%m%d%H%M%S)  # 이미지 태그 생성
-          IMAGE_NAME="${{ secrets.DOCKER_USERNAME }}/babpat-backend:$IMAGE_TAG"  # 이미지 이름과 태그를 명확하게 정의
-          echo "🔹 Image Tag: $IMAGE_TAG"  # IMAGE_TAG 값을 로그로 확인
-          echo "🔹 Image Name: $IMAGE_NAME"  # IMAGE_NAME 값을 로그로 확인
-          docker build -t $IMAGE_NAME .  # Docker 이미지 빌드
-          docker tag $IMAGE_NAME ${{ secrets.DOCKER_USERNAME }}/babpat-backend:latest  # 최신 이미지 태그
-          docker push $IMAGE_NAME  # Docker Hub에 푸시
-          docker push ${{ secrets.DOCKER_USERNAME }}/babpat-backend:latest  # 최신 이미지 푸시
+          docker info
+          docker version
+          docker images
+          echo "🔹 Docker 실행 환경 확인 완료"
 
-      - name: Save SSH Key (PEM)
+      - name: **Build and Push Docker Image**
         run: |
-          echo "${{ secrets.EC2_SSH_KEY }}" | base64 --decode > key.pem  # SSH 키 복호화
+          echo "🔹 Generating IMAGE_TAG..."
+          IMAGE_TAG=$(date +%Y%m%d%H%M%S)  # 이미지 태그 생성
+          IMAGE_NAME="${{ secrets.DOCKER_USERNAME }}/babpat-backend:$IMAGE_TAG"
+
+          echo "🔹 IMAGE_TAG 확인: $IMAGE_TAG"
+          echo "🔹 IMAGE_NAME 확인: $IMAGE_NAME"
+
+          # Docker 이미지 빌드
+          docker build -t $IMAGE_NAME . || { echo "❌ Docker build 실패"; exit 1; }
+
+          # 최신 태그 적용
+          docker tag $IMAGE_NAME ${{ secrets.DOCKER_USERNAME }}/babpat-backend:latest
+
+          # Docker Hub 푸시
+          docker push $IMAGE_NAME || { echo "❌ Docker push 실패"; exit 1; }
+          docker push ${{ secrets.DOCKER_USERNAME }}/babpat-backend:latest || { echo "❌ Docker push 실패"; exit 1; }
+
+      - name: **Save SSH Key (PEM)**
+        run: |
+          echo "🔹 Decoding SSH Key..."
+          echo "${{ secrets.EC2_SSH_KEY }}" | base64 --decode > key.pem || { echo "❌ SSH 키 복호화 실패"; exit 1; }
           chmod 600 key.pem  # 파일 권한 설정
 
-      - name: Deploy to EC2 (Zero Downtime)
+      - name: **Deploy to EC2 (Zero Downtime)**
         run: |
-          # EC2에 SSH로 접속하여 Docker 컨테이너 배포
           ssh -o StrictHostKeyChecking=no -i key.pem ubuntu@${{ secrets.EC2_HOST }} << 'EOF'
             echo "🔹 EC2 접속 성공. Docker 컨테이너 배포 시작..."
 
-            # 이미지 태그 및 이름 설정
-            IMAGE_TAG=${{ secrets.DOCKER_USERNAME }}/babpat-backend:$IMAGE_TAG
-            echo "🔹 최신 Docker 이미지: $IMAGE_TAG"
+            echo "🔹 환경 변수 확인..."
+            echo "DB_URL=${{ secrets.DB_URL }}"
+            echo "DB_USERNAME=${{ secrets.DB_USERNAME }}"
+            echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}"
+            echo "DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }}"
 
-            # 최신 Docker 이미지 Pull
-            docker pull $IMAGE_TAG
+            echo "🔹 최신 Docker 이미지 확인..."
+            IMAGE_TAG=$(docker images | grep '${{ secrets.DOCKER_USERNAME }}/babpat-backend' | awk '{print $2}' | head -n 1)
+            echo "IMAGE_TAG: $IMAGE_TAG"
 
-            # 새 컨테이너 실행 (기존 컨테이너 중단 없이)
+            if [ -z "$IMAGE_TAG" ]; then
+              echo "❌ Docker 이미지 태그가 비어 있음!"
+              exit 1
+            fi
+
+            echo "🔹 최신 Docker 이미지 Pull..."
+            docker pull ${{ secrets.DOCKER_USERNAME }}/babpat-backend:$IMAGE_TAG || { echo "❌ Docker Pull 실패"; exit 1; }
+
+            echo "🔹 기존 컨테이너 중지 및 삭제..."
+            docker stop babpat-backend || echo "⚠ 기존 컨테이너가 없음"
+            docker rm babpat-backend || echo "⚠ 기존 컨테이너 삭제 불필요"
+
             echo "🔹 새 컨테이너 실행..."
-            docker run -d --name babpat-backend-new -p 8080:8080 \
+            docker run -d --name babpat-backend -p 8080:8080 \
               -e DB_URL="${{ secrets.DB_URL }}" \
               -e DB_USERNAME="${{ secrets.DB_USERNAME }}" \
               -e DB_PASSWORD="${{ secrets.DB_PASSWORD }}" \
               --restart unless-stopped \
-              $IMAGE_TAG
+              ${{ secrets.DOCKER_USERNAME }}/babpat-backend:$IMAGE_TAG || { echo "❌ Docker 실행 실패"; exit 1; }
 
-            # 새 컨테이너가 정상적으로 실행될 때까지 대기
-            echo "🔹 새 컨테이너 실행 확인 중..."
-            sleep 10
-            NEW_CONTAINER_STATUS=$(docker inspect -f '{{.State.Health.Status}}' babpat-backend-new || echo "healthy")
-            if [ "$NEW_CONTAINER_STATUS" != "healthy" ]; then
-              echo "❌ 새 컨테이너가 정상 실행되지 않음! 롤백 중..."
-              docker stop babpat-backend-new
-              docker rm babpat-backend-new
-              exit 1
-            fi
-
-            # 기존 컨테이너가 실행 중이면 중지 & 삭제
-            echo "🔹 기존 컨테이너 중지 및 삭제..."
-            docker stop babpat-backend || true
-            docker rm babpat-backend || true
-
-            # 새 컨테이너를 기존 이름으로 변경
-            echo "🔹 새 컨테이너를 기존 컨테이너로 교체..."
-            docker rename babpat-backend-new babpat-backend
-
-            # 실행 중인 컨테이너 확인
-            echo "🔹 실행 중인 컨테이너 목록:"
+            echo "🔹 실행 중인 컨테이너 확인:"
             docker ps -a
           EOF
