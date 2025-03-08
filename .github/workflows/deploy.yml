@@ -38,6 +38,7 @@ jobs:
         run: |
           IMAGE_TAG=$(date +%Y%m%d%H%M%S)  # 이미지 태그 생성
           IMAGE_NAME="${{ secrets.DOCKER_USERNAME }}/babpat-backend:$IMAGE_TAG"  # 이미지 이름과 태그를 명확하게 정의
+          echo "🔹 Image Tag: $IMAGE_TAG"  # 로그 추가로 IMAGE_TAG 확인
           docker build -t $IMAGE_NAME .  # Docker 이미지 빌드
           docker tag $IMAGE_NAME ${{ secrets.DOCKER_USERNAME }}/babpat-backend:latest  # 최신 이미지 태그
           docker push $IMAGE_NAME  # Docker Hub에 푸시
@@ -64,7 +65,7 @@ jobs:
             # 새 컨테이너 실행 (기존 컨테이너 중단 없이)
             echo "🔹 새 컨테이너 실행..."
             docker run -d --name babpat-backend-new -p 8080:8080 \
-              -e DB_URL="${{ secrets.DB_URL }}" \  # DB_URL 환경 변수 설정
+              -e DB_URL="${{ secrets.DB_URL }}" \
               -e DB_USERNAME="${{ secrets.DB_USERNAME }}" \
               -e DB_PASSWORD="${{ secrets.DB_PASSWORD }}" \
               --restart unless-stopped \
