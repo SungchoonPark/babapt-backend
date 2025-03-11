@@ -2,12 +2,10 @@ package com.babpat.server.domain.member.controller;
 
 import com.babpat.server.common.dto.ApiResponse;
 import com.babpat.server.common.enums.CustomResponseStatus;
-import com.babpat.server.domain.member.dto.request.IdCheckRequestDto;
 import com.babpat.server.domain.member.dto.request.SignInRequestDto;
 import com.babpat.server.domain.member.dto.request.SignupRequestDto;
-import com.babpat.server.domain.member.dto.response.IdCheckRespDto;
 import com.babpat.server.domain.member.dto.response.SignInResponseDto;
-import com.babpat.server.domain.member.service.MemberService;
+import com.babpat.server.domain.member.service.auth.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,32 +20,22 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @Slf4j
 public class AuthController {
-    private final MemberService memberService;
+    private final AuthService authService;
 
     @PostMapping("/register")
     public ResponseEntity<ApiResponse<Void>> register(@RequestBody @Valid SignupRequestDto requestDto) {
-        memberService.register(requestDto);
+        authService.register(requestDto);
 
         return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/login")
     public ResponseEntity<ApiResponse<SignInResponseDto>> login(@RequestBody @Valid SignInRequestDto signInRequestDto) {
-        SignInResponseDto response = memberService.login(signInRequestDto);
+        SignInResponseDto response = authService.login(signInRequestDto);
 
         return ResponseEntity.ok().body(ApiResponse.createSuccess(
                 response,
                 CustomResponseStatus.SUCCESS.withMessage("로그인 성공"))
-        );
-    }
-
-    @PostMapping("/duplicate")
-    public ResponseEntity<ApiResponse<IdCheckRespDto>> checkIdExists(@RequestBody @Valid IdCheckRequestDto idCheckRequestDto) {
-        IdCheckRespDto response = memberService.isExistId(idCheckRequestDto);
-
-        return ResponseEntity.ok().body(ApiResponse.createSuccess(
-                response,
-                CustomResponseStatus.SUCCESS.withMessage("아이디 사용가능 여부 확인에 성공하였습니다."))
         );
     }
 }

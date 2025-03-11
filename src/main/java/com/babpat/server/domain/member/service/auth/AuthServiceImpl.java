@@ -1,16 +1,14 @@
-package com.babpat.server.domain.member.service;
+package com.babpat.server.domain.member.service.auth;
 
 import com.babpat.server.common.enums.CustomResponseStatus;
 import com.babpat.server.common.exception.CustomException;
 import com.babpat.server.config.jwt.enums.TokenType;
-import com.babpat.server.domain.member.entity.Member;
-import com.babpat.server.domain.member.repository.MemberRepository;
-import com.babpat.server.domain.member.dto.request.IdCheckRequestDto;
 import com.babpat.server.domain.member.dto.request.SignInRequestDto;
 import com.babpat.server.domain.member.dto.request.SignupRequestDto;
-import com.babpat.server.domain.member.dto.response.IdCheckRespDto;
 import com.babpat.server.domain.member.dto.response.SignInResponseDto;
+import com.babpat.server.domain.member.entity.Member;
 import com.babpat.server.domain.member.entity.enums.Track;
+import com.babpat.server.domain.member.repository.MemberRepository;
 import com.babpat.server.util.PasswordUtil;
 import com.babpat.server.util.jwt.JwtUtil;
 import com.babpat.server.util.jwt.TokenGenerator;
@@ -21,7 +19,8 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class MemberService {
+@Transactional
+public class AuthServiceImpl implements AuthService {
     private static final String RT = "RT:";
 
     private final MemberRepository memberRepository;
@@ -29,7 +28,7 @@ public class MemberService {
     private final RedisUtil redisUtil;
     private final TokenGenerator tokenGenerator;
 
-    @Transactional
+    @Override
     public void register(SignupRequestDto requestDto) {
         if (memberRepository.existsByNicknameAndNameAndTrack(
                 requestDto.names().nickname(),
@@ -42,7 +41,7 @@ public class MemberService {
         memberRepository.save(requestDto.toEntity());
     }
 
-    @Transactional
+    @Override
     public SignInResponseDto login(SignInRequestDto signInRequestDto) {
         Member validMember = memberRepository.findByUsername(signInRequestDto.id())
                 .orElseThrow(() -> new CustomException(CustomResponseStatus.MEMBER_NOT_EXIST));
@@ -64,11 +63,5 @@ public class MemberService {
                 validMember.getTrack(),
                 tokenGenerator.generateTokenWithRFToken(validMember.getId().toString(), refreshToken, validMember.getRole())
         );
-    }
-
-    @Transactional
-    public IdCheckRespDto isExistId(IdCheckRequestDto requestDto) {
-        boolean isExist = memberRepository.findByUsername(requestDto.id()).isPresent();
-        return new IdCheckRespDto(isExist);
     }
 }

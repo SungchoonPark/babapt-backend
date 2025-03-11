@@ -1,37 +1,34 @@
-package com.babpat.server.domain.babpat.service;
+package com.babpat.server.domain.babpat.service.babpat.impl;
 
-import com.babpat.server.domain.babpat.dto.request.BabpatPostReqDto;
+import com.babpat.server.common.enums.CustomResponseStatus;
+import com.babpat.server.common.exception.CustomException;
 import com.babpat.server.domain.babpat.dto.response.BabpatInfoRespDto;
 import com.babpat.server.domain.babpat.entity.Babpat;
 import com.babpat.server.domain.babpat.repository.BabpatRepository;
 import com.babpat.server.domain.babpat.repository.ParticipationRepository;
-import com.babpat.server.common.enums.CustomResponseStatus;
-import com.babpat.server.common.exception.CustomException;
+import com.babpat.server.domain.babpat.service.babpat.BabpatQueryService;
 import com.babpat.server.domain.member.entity.Member;
 import com.babpat.server.domain.member.repository.MemberRepository;
 import com.babpat.server.domain.restaurant.entity.Restaurant;
 import com.babpat.server.domain.restaurant.repository.RestaurantRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class BabpatService {
-    private final BabpatRepository babpatRepository;
-    private final RestaurantRepository restaurantRepository;
+@Transactional(readOnly = true)
+public class BabpatQueryServiceImpl implements BabpatQueryService {
     private final MemberRepository memberRepository;
+    private final BabpatRepository babpatRepository;
     private final ParticipationRepository participationRepository;
+    private final RestaurantRepository restaurantRepository;
 
-    public Long registerBabpat(BabpatPostReqDto babpatPostReqDto) {
-        Babpat babpat = babpatRepository.save(babpatPostReqDto.toBabpat());
-        return babpat.getId();
-    }
-
+    @Override
     public BabpatInfoRespDto getBabpat() {
         List<BabpatInfoRespDto.BabpatData> babpatDatas = new ArrayList<>();
         // 1. 밥팟 테이블에서 정보 가져오기
@@ -79,15 +76,16 @@ public class BabpatService {
         return new BabpatInfoRespDto(babpatDatas);
     }
 
+    @Override
+    public Babpat getBabpatDetail(Long babpatId) {
+        return babpatRepository.findById(babpatId)
+                .orElseThrow(() -> new CustomException(CustomResponseStatus.BABPAT_NOT_EXIST));
+    }
+
     private List<String> parsingCategories(String category1, String category2) {
         return Arrays.stream((category1 + "," + category2).split(","))
                 .map(String::trim)
                 .filter(s -> !s.isEmpty())
-                .collect(Collectors.toList());
-    }
-
-    public Babpat getBabpatDetail(Long babpatId) {
-        return babpatRepository.findById(babpatId)
-                .orElseThrow(() -> new CustomException(CustomResponseStatus.BABPAT_NOT_EXIST));
+                .toList();
     }
 }
