@@ -20,7 +20,6 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Objects;
 
 @Service
@@ -28,6 +27,7 @@ import java.util.Objects;
 @Transactional
 public class AuthServiceImpl implements AuthService {
     private static final String RT = "RT:";
+    private static final String LOGOUT = "LOGOUT";
 
     private final MemberRepository memberRepository;
     private final JwtUtil jwtUtil;
@@ -91,5 +91,17 @@ public class AuthServiceImpl implements AuthService {
         redisUtil.setData(RT + tokenInfo.id(), generateToken.refreshToken(), jwtUtil.getExpiration(TokenType.REFRESH_TOKEN));
 
         return generateToken;
+    }
+
+    @Override
+    public void logout(String accessToken) {
+        String resolveAccessToken = jwtUtil.resolveToken(accessToken);
+        TokenInfo infoInToken = jwtUtil.getTokenClaims(resolveAccessToken);
+        String refreshTokenInRedis = redisUtil.getData(RT + infoInToken.id());
+
+        if (refreshTokenInRedis == null) throw new CustomException(CustomResponseStatus.REFRESH_TOKEN_NOT_FOUND);
+
+        redisUtil.deleteDate(RT + infoInToken.id());
+        redisUtil.setData(resolveAccessToken, LOGOUT, jwtUtil.getExpiration(resolveAccessToken));
     }
 }

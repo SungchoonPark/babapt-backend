@@ -26,7 +26,9 @@ public class AuthController {
     public ResponseEntity<ApiResponse<Void>> register(@RequestBody @Valid SignupRequestDto requestDto) {
         authService.register(requestDto);
 
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok().body(ApiResponse.createSuccessWithNoContent(
+                CustomResponseStatus.SUCCESS_WITH_NO_CONTENT.withMessage("로그인 성공"))
+        );
     }
 
     @PostMapping("/login")
@@ -64,6 +66,17 @@ public class AuthController {
         return ResponseEntity.ok().body(ApiResponse.createSuccess(
                 authTokens,
                 CustomResponseStatus.SUCCESS.withMessage("토큰 재발급 성공"))
+        );
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<ApiResponse<String>> logout(
+            @RequestHeader("Authorization") String accessToken
+    ) {
+        authService.logout(accessToken);
+
+        return ResponseEntity.ok().body(ApiResponse.createSuccessWithNoContent(
+                CustomResponseStatus.SUCCESS_WITH_NO_CONTENT.withMessage("로그아웃이 완료되었습니다."))
         );
     }
 }

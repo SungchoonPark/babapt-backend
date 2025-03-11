@@ -12,6 +12,7 @@ public enum CustomResponseStatus {
     INVALID_MEAL_SPEED(HttpStatus.BAD_REQUEST.value(), "유효하지 않는 식사속도입니다."),
     INVALID_ROLE(HttpStatus.NOT_FOUND.value(), "유효하지 않는 권한입니다."),
 
+    REFRESH_TOKEN_NOT_FOUND(HttpStatus.NOT_FOUND.value(), "리프레시 토큰을 찾을 수 없습니다."),
     MEMBER_NOT_EXIST(HttpStatus.NOT_FOUND.value(), "존재하지 않는 회원정보 입니다. 아이디와 비밀번호를 확인해주세요."),
     LOGOUT_MEMBER(HttpStatus.NOT_FOUND.value(), "로그아웃 되었습니다. 다시 로그인을 진행해주세요."),
     MEMBER_ALREADY_EXIST(HttpStatus.CONFLICT.value(), "이미 존재하는 회원 정보입니다. 로그인을 이용해주세요."),
