@@ -7,5 +7,4 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class MemberCommandServiceImpl implements MemberCommandService {
-    private final MemberCommandService memberCommandService;
 }

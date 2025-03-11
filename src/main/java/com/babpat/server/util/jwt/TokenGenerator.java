@@ -19,6 +19,7 @@ public class TokenGenerator {
     }
 
     public AuthTokens generateTokenWithRFToken(String id, String refreshToken, RoleType roleType) {
+
         String accessToken = jwtUtil.createToken(id, TokenType.ACCESS_TOKEN, roleType);
         return AuthTokens.of(accessToken, refreshToken);
     }

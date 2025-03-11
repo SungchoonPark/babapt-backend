@@ -1,5 +1,6 @@
 package com.babpat.server.util.jwt;
 
+import com.babpat.server.config.jwt.dto.TokenInfo;
 import com.babpat.server.config.jwt.enums.TokenType;
 import com.babpat.server.domain.member.entity.enums.RoleType;
 import io.jsonwebtoken.Claims;
@@ -76,6 +77,10 @@ public class JwtUtil {
         return extractAllClaims(token).get(ID, String.class);
     }
 
+    public String getRoleInToken(String token) {
+        return extractAllClaims(token).get(TOKEN_TYPE, String.class);
+    }
+
     /***
      * @param token : 요청이 들어온 토큰
      * @return : 토큰을 이용하여 로그인 된 UPA 객체를 가져옴 -> UPA 객체 안에 유저의 권한들이 담겨 있음
@@ -132,6 +137,13 @@ public class JwtUtil {
     public String resolveToken(String token) {
         if (token == null) return "";
         return token.substring(BEARER.length());
+    }
+
+    public TokenInfo getTokenClaims(String token) {
+        return TokenInfo.builder()
+                .id(Long.parseLong(getIdInToken(token)))
+                .role(getRoleInToken(token))
+                .build();
     }
 
     /***

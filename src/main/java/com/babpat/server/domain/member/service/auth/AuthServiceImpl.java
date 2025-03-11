@@ -2,11 +2,14 @@ package com.babpat.server.domain.member.service.auth;
 
 import com.babpat.server.common.enums.CustomResponseStatus;
 import com.babpat.server.common.exception.CustomException;
+import com.babpat.server.config.jwt.dto.AuthTokens;
+import com.babpat.server.config.jwt.dto.TokenInfo;
 import com.babpat.server.config.jwt.enums.TokenType;
 import com.babpat.server.domain.member.dto.request.SignInRequestDto;
 import com.babpat.server.domain.member.dto.request.SignupRequestDto;
 import com.babpat.server.domain.member.dto.response.SignInResponseDto;
 import com.babpat.server.domain.member.entity.Member;
+import com.babpat.server.domain.member.entity.enums.RoleType;
 import com.babpat.server.domain.member.entity.enums.Track;
 import com.babpat.server.domain.member.repository.MemberRepository;
 import com.babpat.server.util.PasswordUtil;
@@ -16,6 +19,9 @@ import com.babpat.server.util.redis.RedisUtil;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -63,5 +69,27 @@ public class AuthServiceImpl implements AuthService {
                 validMember.getTrack(),
                 tokenGenerator.generateTokenWithRFToken(validMember.getId().toString(), refreshToken, validMember.getRole())
         );
+    }
+
+    @Override
+    public AuthTokens reissue(String refreshToken) {
+        TokenInfo tokenInfo = jwtUtil.getTokenClaims(refreshToken);
+
+        String refreshTokenInRedis = redisUtil.getData(RT + tokenInfo.id());
+        if (refreshTokenInRedis == null) {
+            throw new CustomException(CustomResponseStatus.REFRESH_TOKEN_EXPIRED);
+        }
+        if (!Objects.equals(refreshToken, refreshTokenInRedis)) {
+            throw new CustomException(CustomResponseStatus.REFRESH_TOKEN_NOT_MATCH);
+        }
+
+        Member findMember = memberRepository.findById(tokenInfo.id()).orElseThrow(
+                () -> new CustomException(CustomResponseStatus.MEMBER_NOT_EXIST)
+        );
+
+        AuthTokens generateToken = tokenGenerator.generateTokenWithoutRFToken(findMember.getId().toString(), RoleType.fromString(tokenInfo.role()));
+        redisUtil.setData(RT + tokenInfo.id(), generateToken.refreshToken(), jwtUtil.getExpiration(TokenType.REFRESH_TOKEN));
+
+        return generateToken;
     }
 }
