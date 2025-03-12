@@ -1,0 +1,25 @@
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/babpat?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: babpat
+    password: babpat1!
+
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+jwt:
+  secret: 86de5c6bcfbf68591f0a2b433dad58dcfb91c746404295a2da6e969b0f68ff4c869ae0770f083bf36bcccb2b922f028cbba849ba30ee7829522fd41b661bfc29
+  expiration_time:
+    access_token: 30000000000000000 # 5분
+    refresh_token: 86400000000000000 # 일주일
