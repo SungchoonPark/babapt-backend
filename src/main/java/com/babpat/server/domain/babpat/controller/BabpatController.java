@@ -31,13 +31,13 @@ public class BabpatController {
         return ResponseEntity.ok().body(ApiResponse.createSuccess(response, CustomResponseStatus.SUCCESS));
     }
 
-    @GetMapping("/v2/post")
-    public ResponseEntity<ApiResponse<Page<BabpatInfoRespDto>>> getBabpat(
-            SearchCond searchCond,
-            Pageable pageable
-    ) {
-
-    }
+//    @GetMapping("/v2/post")
+//    public ResponseEntity<ApiResponse<Page<BabpatInfoRespDto>>> getBabpat(
+//            SearchCond searchCond,
+//            Pageable pageable
+//    ) {
+//
+//    }
 
     @PostMapping("/post")
     public ResponseEntity<ApiResponse<Void>> postBabpat(@RequestBody @Valid BabpatPostReqDto babpatPostReqDto) {

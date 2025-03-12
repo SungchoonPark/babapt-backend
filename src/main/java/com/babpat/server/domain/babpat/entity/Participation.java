@@ -26,7 +26,7 @@ public class Participation extends BaseEntity {
     private Member member;
 
     @ManyToOne
-    @JoinColumn(name = "member_id")
+    @JoinColumn(name = "babpat_id")
     @NotNull
     private Babpat babpat;
 }

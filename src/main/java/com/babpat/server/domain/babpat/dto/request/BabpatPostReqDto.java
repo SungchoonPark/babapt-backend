@@ -2,6 +2,8 @@ package com.babpat.server.domain.babpat.dto.request;
 
 import com.babpat.server.domain.babpat.entity.Babpat;
 import com.babpat.server.domain.babpat.entity.enums.MealSpeed;
+import com.babpat.server.domain.member.entity.Member;
+import com.babpat.server.domain.restaurant.entity.Restaurant;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
@@ -18,10 +20,10 @@ public record BabpatPostReqDto(
         String mealSpeed
 ) {
 
-    public Babpat toBabpat() {
+    public Babpat toBabpat(Member leader, Restaurant restaurant) {
         return Babpat.builder()
-                .leaderId(leader)
-                .restaurantId(place)
+                .member(leader)
+                .restaurant(restaurant)
                 .comment(comment)
                 .headCount(headCount)
                 .patDate(date)

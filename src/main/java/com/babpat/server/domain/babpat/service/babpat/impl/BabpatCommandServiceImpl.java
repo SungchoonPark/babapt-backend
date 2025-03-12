@@ -10,6 +10,10 @@ import com.babpat.server.domain.babpat.service.babpat.BabpatCommandService;
 import com.babpat.server.domain.babpat.service.babpat.BabpatQueryService;
 import com.babpat.server.domain.babpat.service.participation.ParticipationCommandService;
 import com.babpat.server.domain.babpat.service.participation.ParticipationQueryService;
+import com.babpat.server.domain.member.entity.Member;
+import com.babpat.server.domain.member.repository.MemberRepository;
+import com.babpat.server.domain.restaurant.entity.Restaurant;
+import com.babpat.server.domain.restaurant.repository.RestaurantRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,6 +26,8 @@ public class BabpatCommandServiceImpl implements BabpatCommandService {
     private final BabpatQueryService babpatQueryService;
     private final ParticipationQueryService participationQueryService;
     private final ParticipationCommandService participationCommandService;
+    private final MemberRepository memberRepository;
+    private final RestaurantRepository restaurantRepository;
 
     @Override
     public void applyBabpat(BabpatApplyRequest applyRequest) {
@@ -31,6 +37,12 @@ public class BabpatCommandServiceImpl implements BabpatCommandService {
 
     @Override
     public void postBabpat(BabpatPostReqDto babpatPostReqDto) {
+        Member leader = memberRepository.findById(babpatPostReqDto.leader())
+                .orElseThrow(() -> new CustomException(CustomResponseStatus.MEMBER_NOT_EXIST));
+
+        Restaurant restaurant = restaurantRepository.findById(babpatPostReqDto.place())
+                .orElseThrow(() -> new CustomException(CustomResponseStatus.RESTAURANT_NOT_EXIST));
+
         if (participationQueryService.isExistParticipationByDateTime(
                 babpatPostReqDto.leader(),
                 babpatPostReqDto.date(),
@@ -39,7 +51,7 @@ public class BabpatCommandServiceImpl implements BabpatCommandService {
             throw new CustomException(CustomResponseStatus.BABPAT_ALREADY_EXIST);
         }
 
-        Babpat babpat = babpatRepository.save(babpatPostReqDto.toBabpat());
-        participationCommandService.registerParticipation(babpat.getId(), babpatPostReqDto);
+        Babpat babpat = babpatRepository.save(babpatPostReqDto.toBabpat(leader, restaurant));
+        participationCommandService.registerParticipation(babpat, babpatPostReqDto);
     }
 }
