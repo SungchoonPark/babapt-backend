@@ -2,7 +2,7 @@ package com.babpat.server.domain.member.dto.request;
 
 import com.babpat.server.domain.member.entity.Member;
 import com.babpat.server.domain.member.entity.enums.Track;
-import com.babpat.server.util.PasswordUtil;
+import com.babpat.server.util.password.PasswordUtil;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 

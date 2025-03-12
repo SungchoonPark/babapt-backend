@@ -51,7 +51,6 @@ out/
 **/bootstrap*.properties
 **/credentials.json
 **/*secret*
-**/*password*
 **/*credential*
 **/keystore*
 

@@ -35,12 +35,12 @@ public class BabpatQueryServiceImpl implements BabpatQueryService {
         List<Babpat> babpats = babpatRepository.findAll();
         // 2. 해당 식당 정보 가져오기
         for (Babpat babpat : babpats) {
-            Long restaurantId = babpat.getRestaurantId();
+            Long restaurantId = babpat.getRestaurant().getId();
 
             Restaurant restaurant = restaurantRepository.findById(restaurantId)
                     .orElseThrow(() -> new CustomException(CustomResponseStatus.RESTAURANT_NOT_EXIST));
 
-            Member member = memberRepository.findById(babpat.getLeaderId())
+            Member member = memberRepository.findById(babpat.getMember().getId())
                     .orElseThrow(() -> new CustomException(CustomResponseStatus.MEMBER_NOT_EXIST));
 
             babpatDatas.add(
