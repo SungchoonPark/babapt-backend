@@ -6,6 +6,7 @@ import com.babpat.server.domain.babpat.dto.request.BabpatApplyRequest;
 import com.babpat.server.domain.babpat.dto.request.BabpatPostReqDto;
 import com.babpat.server.domain.babpat.entity.Babpat;
 import com.babpat.server.domain.babpat.entity.Participation;
+import com.babpat.server.domain.babpat.entity.enums.ParticipationStatus;
 import com.babpat.server.domain.babpat.repository.BabpatRepository;
 import com.babpat.server.domain.babpat.repository.ParticipationRepository;
 import com.babpat.server.domain.babpat.service.babpat.BabpatQueryService;
@@ -22,7 +23,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class ParticipationCommandServiceImpl implements ParticipationCommandService {
     private final ParticipationRepository participationRepository;
     private final MemberRepository memberRepository;
-    private final BabpatQueryService babpatQueryService;
     private final BabpatRepository babpatRepository;
 
     @Override
@@ -30,6 +30,7 @@ public class ParticipationCommandServiceImpl implements ParticipationCommandServ
         Participation participation = Participation.builder()
                 .member(leader)
                 .babpat(babpat)
+                .participationStatus(ParticipationStatus.JOINED)
                 .build();
 
         participationRepository.save(participation);
@@ -51,6 +52,8 @@ public class ParticipationCommandServiceImpl implements ParticipationCommandServ
 
         if (headCount - filledSlots <= 0) {
             throw new CustomException(CustomResponseStatus.BABPAT_CLOSED);
+        } else if (headCount - filledSlots == 1) {
+            babpat.updateFull();
         }
 
         participationRepository.save(applyRequest.toEntity(babpat, applyMember));

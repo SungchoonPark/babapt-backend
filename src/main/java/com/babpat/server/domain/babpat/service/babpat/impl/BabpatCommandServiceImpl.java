@@ -54,4 +54,15 @@ public class BabpatCommandServiceImpl implements BabpatCommandService {
         Babpat babpat = babpatRepository.save(babpatPostReqDto.toBabpat(leader, restaurant));
         participationCommandService.registerParticipation(babpat, leader);
     }
+
+    @Override
+    public void delete(Long babpatId, String authUsername) {
+        Babpat babpat = babpatQueryService.getBabpatDetail(babpatId);
+
+        if(!babpat.isValidMember(authUsername)) {
+            throw new CustomException(CustomResponseStatus.ACCESS_DENIED);
+        }
+
+        babpat.updateDelete();
+    }
 }

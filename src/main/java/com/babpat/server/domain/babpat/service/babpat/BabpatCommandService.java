@@ -7,4 +7,5 @@ import com.babpat.server.domain.member.entity.Member;
 public interface BabpatCommandService {
     void applyBabpat(BabpatApplyRequest applyRequest, String authUsername);
     void postBabpat(BabpatPostReqDto babpatPostReqDto, String authUsername);
+    void delete(Long babpatId, String username);
 }

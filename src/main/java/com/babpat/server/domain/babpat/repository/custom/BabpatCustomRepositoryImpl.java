@@ -2,6 +2,7 @@ package com.babpat.server.domain.babpat.repository.custom;
 
 import com.babpat.server.domain.babpat.dto.request.SearchCond;
 import com.babpat.server.domain.babpat.dto.response.BabpatInfoRespDto;
+import com.babpat.server.domain.babpat.entity.enums.BabpatStatus;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQuery;
@@ -42,7 +43,8 @@ public class BabpatCustomRepositoryImpl implements BabpatCustomRepository {
                 .where(
                         foodEq(searchCond.foodCond()),
                         peopleEq(searchCond.peopleCond()),
-                        keywordEq(searchCond.keywordCond())
+                        keywordEq(searchCond.keywordCond()),
+                        babpat.babpatStatus.in(BabpatStatus.ONGOING, BabpatStatus.FULL)
                 )
                 .orderBy(babpat.createdAt.desc())
                 .offset(pageable.getOffset())

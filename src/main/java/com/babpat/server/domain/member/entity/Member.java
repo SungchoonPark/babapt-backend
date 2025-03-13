@@ -45,4 +45,8 @@ public class Member extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "role")
     private RoleType role;
+
+    public boolean isSameUsername(String username) {
+        return this.username.equals(username);
+    }
 }

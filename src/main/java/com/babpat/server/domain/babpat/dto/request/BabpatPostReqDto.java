@@ -1,6 +1,7 @@
 package com.babpat.server.domain.babpat.dto.request;
 
 import com.babpat.server.domain.babpat.entity.Babpat;
+import com.babpat.server.domain.babpat.entity.enums.BabpatStatus;
 import com.babpat.server.domain.babpat.entity.enums.MealSpeed;
 import com.babpat.server.domain.member.entity.Member;
 import com.babpat.server.domain.restaurant.entity.Restaurant;
@@ -28,6 +29,7 @@ public record BabpatPostReqDto(
                 .patDate(date)
                 .patTime(time)
                 .mealSpeed(mealSpeed == null ? null : MealSpeed.fromString(mealSpeed))
+                .babpatStatus(BabpatStatus.ONGOING)
                 .build();
     }
 }
