@@ -23,7 +23,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class ParticipationCommandServiceImpl implements ParticipationCommandService {
     private final ParticipationRepository participationRepository;
     private final MemberRepository memberRepository;
-    private final BabpatQueryService babpatQueryService;
     private final BabpatRepository babpatRepository;
 
     @Override
@@ -53,6 +52,8 @@ public class ParticipationCommandServiceImpl implements ParticipationCommandServ
 
         if (headCount - filledSlots <= 0) {
             throw new CustomException(CustomResponseStatus.BABPAT_CLOSED);
+        } else if (headCount - filledSlots == 1) {
+            babpat.updateFull();
         }
 
         participationRepository.save(applyRequest.toEntity(babpat, applyMember));

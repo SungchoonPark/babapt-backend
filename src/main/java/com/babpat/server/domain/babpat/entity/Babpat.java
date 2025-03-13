@@ -54,4 +54,13 @@ public class Babpat extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
     private BabpatStatus babpatStatus;
+
+    public void updateFull() {
+        this.babpatStatus = BabpatStatus.FULL;
+    }
+
+    public void updateOngoing() {
+        this.babpatStatus = BabpatStatus.ONGOING;
+    }
+
 }
