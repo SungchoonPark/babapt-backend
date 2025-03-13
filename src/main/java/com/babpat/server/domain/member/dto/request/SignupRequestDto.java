@@ -1,6 +1,7 @@
 package com.babpat.server.domain.member.dto.request;
 
 import com.babpat.server.domain.member.entity.Member;
+import com.babpat.server.domain.member.entity.enums.RoleType;
 import com.babpat.server.domain.member.entity.enums.Track;
 import com.babpat.server.util.password.PasswordUtil;
 import jakarta.validation.Valid;
@@ -25,6 +26,7 @@ public record SignupRequestDto(
                 .username(id)
                 .password(PasswordUtil.hashPassword(password))
                 .track(Track.fromString(track))
+                .role(RoleType.ROLE_MEMBER)
                 .build();
     }
 }

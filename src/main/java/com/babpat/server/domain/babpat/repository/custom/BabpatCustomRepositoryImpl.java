@@ -2,7 +2,6 @@ package com.babpat.server.domain.babpat.repository.custom;
 
 import com.babpat.server.domain.babpat.dto.request.SearchCond;
 import com.babpat.server.domain.babpat.dto.response.BabpatInfoRespDto;
-import com.querydsl.core.QueryResults;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQuery;
@@ -43,6 +42,7 @@ public class BabpatCustomRepositoryImpl implements BabpatCustomRepository {
                         foodEq(searchCond.foodCond()),
                         peopleEq(searchCond.peopleCond())
                 )
+                .orderBy(babpat.createdAt.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
@@ -50,8 +50,10 @@ public class BabpatCustomRepositoryImpl implements BabpatCustomRepository {
         JPAQuery<Long> countQuery = jpaQueryFactory
                 .select(babpat.count())
                 .from(babpat)
-                .where(foodEq(searchCond.foodCond()),
-                        peopleEq(searchCond.peopleCond()))
+                .where(
+                        foodEq(searchCond.foodCond()),
+                        peopleEq(searchCond.peopleCond())
+                )
                 .leftJoin(babpat.restaurant, restaurant);
 
         List<BabpatInfoRespDto> content = results.stream()
@@ -67,7 +69,7 @@ public class BabpatCustomRepositoryImpl implements BabpatCustomRepository {
                                         tuple.get(babpat.id),
                                         tuple.get(babpat.comment),
                                         new BabpatInfoRespDto.Capacity(
-                                                tuple.get(babpat.headCount),
+                                                Optional.ofNullable(tuple.get(babpat.headCount)).orElse(0),
                                                 countParticipation(tuple.get(babpat.id))
                                         ),
                                         tuple.get(babpat.mealSpeed),
