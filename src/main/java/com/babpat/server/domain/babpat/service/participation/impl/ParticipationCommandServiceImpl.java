@@ -6,6 +6,7 @@ import com.babpat.server.domain.babpat.dto.request.BabpatApplyRequest;
 import com.babpat.server.domain.babpat.dto.request.BabpatPostReqDto;
 import com.babpat.server.domain.babpat.entity.Babpat;
 import com.babpat.server.domain.babpat.entity.Participation;
+import com.babpat.server.domain.babpat.entity.enums.ParticipationStatus;
 import com.babpat.server.domain.babpat.repository.BabpatRepository;
 import com.babpat.server.domain.babpat.repository.ParticipationRepository;
 import com.babpat.server.domain.babpat.service.babpat.BabpatQueryService;
@@ -30,6 +31,7 @@ public class ParticipationCommandServiceImpl implements ParticipationCommandServ
         Participation participation = Participation.builder()
                 .member(leader)
                 .babpat(babpat)
+                .participationStatus(ParticipationStatus.JOINED)
                 .build();
 
         participationRepository.save(participation);
