@@ -17,13 +17,4 @@ import org.springframework.web.bind.annotation.RestController;
 public class MemberController {
     private final MemberQueryService memberQueryService;
 
-    @PostMapping("/duplicate")
-    public ResponseEntity<ApiResponse<IdCheckRespDto>> checkIdExists(@RequestBody @Valid IdCheckRequestDto idCheckRequestDto) {
-        IdCheckRespDto response = memberQueryService.isExistId(idCheckRequestDto);
-
-        return ResponseEntity.ok().body(ApiResponse.createSuccess(
-                response,
-                CustomResponseStatus.SUCCESS.withMessage("아이디 사용가능 여부 확인에 성공하였습니다."))
-        );
-    }
 }
