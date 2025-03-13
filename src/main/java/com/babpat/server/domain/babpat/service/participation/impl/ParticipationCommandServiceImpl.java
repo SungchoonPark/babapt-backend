@@ -26,10 +26,7 @@ public class ParticipationCommandServiceImpl implements ParticipationCommandServ
     private final BabpatRepository babpatRepository;
 
     @Override
-    public void registerParticipation(Babpat babpat, BabpatPostReqDto babpatPostReqDto) {
-        Member leader = memberRepository.findById(babpatPostReqDto.leader())
-                .orElseThrow(() -> new CustomException(CustomResponseStatus.MEMBER_NOT_EXIST));
-
+    public void registerParticipation(Babpat babpat, Member leader) {
         Participation participation = Participation.builder()
                 .member(leader)
                 .babpat(babpat)
@@ -39,14 +36,14 @@ public class ParticipationCommandServiceImpl implements ParticipationCommandServ
     }
 
     @Override
-    public void applyBabpat(Integer headCount, BabpatApplyRequest applyRequest) {
+    public void applyBabpat(Integer headCount, String applyUsername, BabpatApplyRequest applyRequest) {
         Babpat babpat = babpatRepository.findById(applyRequest.babpatId())
                 .orElseThrow(() -> new CustomException(CustomResponseStatus.BABPAT_NOT_EXIST));
-        Member applyMember = memberRepository.findById(applyRequest.userId())
+        Member applyMember = memberRepository.findByUsername(applyUsername)
                 .orElseThrow(() -> new CustomException(CustomResponseStatus.MEMBER_NOT_EXIST));
 
         // Todo : 코드 최적화 가능
-        if (participationRepository.existsByBabpatIdAndMemberId(applyRequest.babpatId(), applyRequest.userId())) {
+        if (participationRepository.existsByBabpatIdAndMemberId(applyRequest.babpatId(), applyMember.getId())) {
             throw new CustomException(CustomResponseStatus.ALREADY_PARTICIPATION);
         }
 

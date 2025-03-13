@@ -30,21 +30,21 @@ public class BabpatCommandServiceImpl implements BabpatCommandService {
     private final RestaurantRepository restaurantRepository;
 
     @Override
-    public void applyBabpat(BabpatApplyRequest applyRequest) {
+    public void applyBabpat(BabpatApplyRequest applyRequest, String applyUsername) {
         Babpat babpat = babpatQueryService.getBabpatDetail(applyRequest.babpatId());
-        participationCommandService.applyBabpat(babpat.getHeadCount(), applyRequest);
+        participationCommandService.applyBabpat(babpat.getHeadCount(), applyUsername, applyRequest);
     }
 
     @Override
-    public void postBabpat(BabpatPostReqDto babpatPostReqDto) {
-        Member leader = memberRepository.findById(babpatPostReqDto.leader())
+    public void postBabpat(BabpatPostReqDto babpatPostReqDto, String authUsername) {
+        Member leader = memberRepository.findByUsername(authUsername)
                 .orElseThrow(() -> new CustomException(CustomResponseStatus.MEMBER_NOT_EXIST));
 
         Restaurant restaurant = restaurantRepository.findById(babpatPostReqDto.place())
                 .orElseThrow(() -> new CustomException(CustomResponseStatus.RESTAURANT_NOT_EXIST));
 
         if (participationQueryService.isExistParticipationByDateTime(
-                babpatPostReqDto.leader(),
+                leader.getId(),
                 babpatPostReqDto.date(),
                 babpatPostReqDto.time())
         ) {
@@ -52,6 +52,6 @@ public class BabpatCommandServiceImpl implements BabpatCommandService {
         }
 
         Babpat babpat = babpatRepository.save(babpatPostReqDto.toBabpat(leader, restaurant));
-        participationCommandService.registerParticipation(babpat, babpatPostReqDto);
+        participationCommandService.registerParticipation(babpat, leader);
     }
 }

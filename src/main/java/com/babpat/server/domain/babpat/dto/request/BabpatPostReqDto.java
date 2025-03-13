@@ -11,7 +11,6 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 public record BabpatPostReqDto(
-        @NotNull Long leader,
         @NotNull Long place,
         @NotNull LocalDate date,
         @NotNull LocalTime time,
