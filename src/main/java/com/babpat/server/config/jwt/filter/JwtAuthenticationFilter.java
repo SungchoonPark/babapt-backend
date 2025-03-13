@@ -72,6 +72,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 "/api/v1/auth/register",
                 "/api/v1/auth/login",
                 "/api/v1/auth/duplicate",
+                "/api/v1/babpat/v2/post",
                 "/favicon.ico"
         };
         String path = request.getRequestURI();

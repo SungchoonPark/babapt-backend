@@ -60,7 +60,9 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/api/v1/auth/reissue",
                                 "/api/v1/auth/register",
+                                "/api/v1/auth/duplicate",
                                 "/api/v1/auth/login",
+                                "/api/v1/babpat/post",
                                 "/favicon.ico"
                         )
                         .permitAll()  // 인증 없이 접근 가능한 URI 추가

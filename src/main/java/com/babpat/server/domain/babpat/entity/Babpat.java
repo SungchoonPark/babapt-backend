@@ -2,6 +2,8 @@ package com.babpat.server.domain.babpat.entity;
 
 import com.babpat.server.domain.babpat.entity.enums.MealSpeed;
 import com.babpat.server.common.model.BaseEntity;
+import com.babpat.server.domain.member.entity.Member;
+import com.babpat.server.domain.restaurant.entity.Restaurant;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -23,11 +25,15 @@ public class Babpat extends BaseEntity {
     @Column(name = "babpat_id")
     private Long id;
 
+    @ManyToOne
+    @JoinColumn(name = "leader_id")
     @NotNull
-    private Long leaderId;
+    private Member member;
 
+    @ManyToOne
+    @JoinColumn(name = "restaurant_id")
     @NotNull
-    private Long restaurantId;
+    private Restaurant restaurant;
 
     @NotNull
     private String comment;

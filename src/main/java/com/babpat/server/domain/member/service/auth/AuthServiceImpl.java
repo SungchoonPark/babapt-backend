@@ -12,7 +12,7 @@ import com.babpat.server.domain.member.entity.Member;
 import com.babpat.server.domain.member.entity.enums.RoleType;
 import com.babpat.server.domain.member.entity.enums.Track;
 import com.babpat.server.domain.member.repository.MemberRepository;
-import com.babpat.server.util.PasswordUtil;
+import com.babpat.server.util.password.PasswordUtil;
 import com.babpat.server.util.jwt.JwtUtil;
 import com.babpat.server.util.jwt.TokenGenerator;
 import com.babpat.server.util.redis.RedisUtil;

@@ -12,8 +12,8 @@ public interface ParticipationRepository extends JpaRepository<Participation, Lo
     @Query("""
         SELECT COUNT(p) > 0 
         FROM Participation p
-        JOIN Babpat b ON p.babpatId = b.id
-        WHERE p.memberId = :memberId
+        JOIN Babpat b ON p.babpat.id = b.id
+        WHERE p.member.id = :memberId
         AND b.patDate = :patDate
         AND b.patTime >= :startTime
         AND b.patTime <= :endTime

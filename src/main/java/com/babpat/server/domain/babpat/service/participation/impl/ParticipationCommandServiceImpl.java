@@ -6,9 +6,12 @@ import com.babpat.server.domain.babpat.dto.request.BabpatApplyRequest;
 import com.babpat.server.domain.babpat.dto.request.BabpatPostReqDto;
 import com.babpat.server.domain.babpat.entity.Babpat;
 import com.babpat.server.domain.babpat.entity.Participation;
+import com.babpat.server.domain.babpat.repository.BabpatRepository;
 import com.babpat.server.domain.babpat.repository.ParticipationRepository;
 import com.babpat.server.domain.babpat.service.babpat.BabpatQueryService;
 import com.babpat.server.domain.babpat.service.participation.ParticipationCommandService;
+import com.babpat.server.domain.member.entity.Member;
+import com.babpat.server.domain.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,13 +21,18 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class ParticipationCommandServiceImpl implements ParticipationCommandService {
     private final ParticipationRepository participationRepository;
+    private final MemberRepository memberRepository;
     private final BabpatQueryService babpatQueryService;
+    private final BabpatRepository babpatRepository;
 
     @Override
-    public void registerParticipation(Long babpatId, BabpatPostReqDto babpatPostReqDto) {
+    public void registerParticipation(Babpat babpat, BabpatPostReqDto babpatPostReqDto) {
+        Member leader = memberRepository.findById(babpatPostReqDto.leader())
+                .orElseThrow(() -> new CustomException(CustomResponseStatus.MEMBER_NOT_EXIST));
+
         Participation participation = Participation.builder()
-                .memberId(babpatPostReqDto.leader())
-                .babpatId(babpatId)
+                .member(leader)
+                .babpat(babpat)
                 .build();
 
         participationRepository.save(participation);
@@ -32,6 +40,11 @@ public class ParticipationCommandServiceImpl implements ParticipationCommandServ
 
     @Override
     public void applyBabpat(Integer headCount, BabpatApplyRequest applyRequest) {
+        Babpat babpat = babpatRepository.findById(applyRequest.babpatId())
+                .orElseThrow(() -> new CustomException(CustomResponseStatus.BABPAT_NOT_EXIST));
+        Member applyMember = memberRepository.findById(applyRequest.userId())
+                .orElseThrow(() -> new CustomException(CustomResponseStatus.MEMBER_NOT_EXIST));
+
         // Todo : 코드 최적화 가능
         if (participationRepository.existsByBabpatIdAndMemberId(applyRequest.babpatId(), applyRequest.userId())) {
             throw new CustomException(CustomResponseStatus.ALREADY_PARTICIPATION);
@@ -43,6 +56,6 @@ public class ParticipationCommandServiceImpl implements ParticipationCommandServ
             throw new CustomException(CustomResponseStatus.BABPAT_CLOSED);
         }
 
-        participationRepository.save(applyRequest.toEntity());
+        participationRepository.save(applyRequest.toEntity(babpat, applyMember));
     }
 }
