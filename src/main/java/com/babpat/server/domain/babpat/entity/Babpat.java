@@ -1,5 +1,6 @@
 package com.babpat.server.domain.babpat.entity;
 
+import com.babpat.server.domain.babpat.entity.enums.BabpatStatus;
 import com.babpat.server.domain.babpat.entity.enums.MealSpeed;
 import com.babpat.server.common.model.BaseEntity;
 import com.babpat.server.domain.member.entity.Member;
@@ -49,4 +50,8 @@ public class Babpat extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     private MealSpeed mealSpeed;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status")
+    private BabpatStatus babpatStatus;
 }

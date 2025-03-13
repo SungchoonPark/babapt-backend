@@ -1,6 +1,7 @@
 package com.babpat.server.domain.babpat.entity;
 
 import com.babpat.server.common.model.BaseEntity;
+import com.babpat.server.domain.babpat.entity.enums.ParticipationStatus;
 import com.babpat.server.domain.member.entity.Member;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -29,4 +30,8 @@ public class Participation extends BaseEntity {
     @JoinColumn(name = "babpat_id")
     @NotNull
     private Babpat babpat;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status")
+    private ParticipationStatus participationStatus;
 }
