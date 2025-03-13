@@ -3,10 +3,13 @@ package com.babpat.server.domain.member.controller;
 import com.babpat.server.common.dto.ApiResponse;
 import com.babpat.server.common.enums.CustomResponseStatus;
 import com.babpat.server.config.jwt.dto.AuthTokens;
+import com.babpat.server.domain.member.dto.request.IdCheckRequestDto;
 import com.babpat.server.domain.member.dto.request.SignInRequestDto;
 import com.babpat.server.domain.member.dto.request.SignupRequestDto;
+import com.babpat.server.domain.member.dto.response.IdCheckRespDto;
 import com.babpat.server.domain.member.dto.response.SignInResponseDto;
 import com.babpat.server.domain.member.service.auth.AuthService;
+import com.babpat.server.domain.member.service.member.MemberQueryService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -21,13 +24,24 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 public class AuthController {
     private final AuthService authService;
+    private final MemberQueryService memberQueryService;
+
+    @PostMapping("/duplicate")
+    public ResponseEntity<ApiResponse<IdCheckRespDto>> checkIdExists(@RequestBody @Valid IdCheckRequestDto idCheckRequestDto) {
+        IdCheckRespDto response = memberQueryService.isExistId(idCheckRequestDto);
+
+        return ResponseEntity.ok().body(ApiResponse.createSuccess(
+                response,
+                CustomResponseStatus.SUCCESS.withMessage("아이디 사용가능 여부 확인에 성공하였습니다."))
+        );
+    }
 
     @PostMapping("/register")
     public ResponseEntity<ApiResponse<Void>> register(@RequestBody @Valid SignupRequestDto requestDto) {
         authService.register(requestDto);
 
         return ResponseEntity.ok().body(ApiResponse.createSuccessWithNoContent(
-                CustomResponseStatus.SUCCESS_WITH_NO_CONTENT.withMessage("로그인 성공"))
+                CustomResponseStatus.SUCCESS_WITH_NO_CONTENT.withMessage("회원가입 성공"))
         );
     }
 

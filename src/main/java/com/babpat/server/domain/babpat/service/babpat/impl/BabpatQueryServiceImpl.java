@@ -2,6 +2,7 @@ package com.babpat.server.domain.babpat.service.babpat.impl;
 
 import com.babpat.server.common.enums.CustomResponseStatus;
 import com.babpat.server.common.exception.CustomException;
+import com.babpat.server.domain.babpat.dto.request.SearchCond;
 import com.babpat.server.domain.babpat.dto.response.BabpatInfoRespDto;
 import com.babpat.server.domain.babpat.entity.Babpat;
 import com.babpat.server.domain.babpat.repository.BabpatRepository;
@@ -12,6 +13,8 @@ import com.babpat.server.domain.member.repository.MemberRepository;
 import com.babpat.server.domain.restaurant.entity.Restaurant;
 import com.babpat.server.domain.restaurant.repository.RestaurantRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -74,6 +77,11 @@ public class BabpatQueryServiceImpl implements BabpatQueryService {
 
         // 3. dto 완성해서 내려주기
         return new BabpatInfoRespDto(babpatDatas);
+    }
+
+    @Override
+    public Page<BabpatInfoRespDto> getBabpatWithPaging(SearchCond searchCond, Pageable pageable) {
+        return babpatRepository.getBabpats(searchCond, pageable);
     }
 
     @Override
