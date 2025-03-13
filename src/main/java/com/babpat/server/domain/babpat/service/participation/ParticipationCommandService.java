@@ -7,5 +7,5 @@ import com.babpat.server.domain.member.entity.Member;
 
 public interface ParticipationCommandService {
     void registerParticipation(Babpat babpat, Member leader);
-    void applyBabpat(Integer headCount, BabpatApplyRequest applyRequest);
+    void applyBabpat(Integer headCount, String applyUsername, BabpatApplyRequest applyRequest);
 }

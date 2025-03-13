@@ -30,9 +30,9 @@ public class BabpatCommandServiceImpl implements BabpatCommandService {
     private final RestaurantRepository restaurantRepository;
 
     @Override
-    public void applyBabpat(BabpatApplyRequest applyRequest) {
+    public void applyBabpat(BabpatApplyRequest applyRequest, String applyUsername) {
         Babpat babpat = babpatQueryService.getBabpatDetail(applyRequest.babpatId());
-        participationCommandService.applyBabpat(babpat.getHeadCount(), applyRequest);
+        participationCommandService.applyBabpat(babpat.getHeadCount(), applyUsername, applyRequest);
     }
 
     @Override

@@ -6,7 +6,6 @@ import com.babpat.server.domain.member.entity.Member;
 import jakarta.validation.constraints.NotNull;
 
 public record BabpatApplyRequest(
-        @NotNull Long userId,
         @NotNull Long babpatId
 ) {
 

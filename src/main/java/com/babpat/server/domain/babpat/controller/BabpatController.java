@@ -48,8 +48,11 @@ public class BabpatController {
     }
 
     @PostMapping("/post/apply")
-    public ResponseEntity<ApiResponse<Void>> applyBabpat(@RequestBody @Valid BabpatApplyRequest applyRequest) {
-        babpatCommandService.applyBabpat(applyRequest);
+    public ResponseEntity<ApiResponse<Void>> applyBabpat(
+            @RequestBody @Valid BabpatApplyRequest applyRequest,
+            @AuthenticationPrincipal PrincipalDetails principalDetails
+    ) {
+        babpatCommandService.applyBabpat(applyRequest, principalDetails.getUsername());
 
         return ResponseEntity.ok().body(ApiResponse.createSuccessWithNoContent(CustomResponseStatus.SUCCESS_WITH_NO_CONTENT.withMessage("밥팟 신청이 완료되었습니다.")));
     }
