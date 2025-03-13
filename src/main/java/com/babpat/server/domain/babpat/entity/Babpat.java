@@ -23,7 +23,6 @@ import java.time.LocalTime;
 public class Babpat extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "babpat_id")
     private Long id;
 
     @ManyToOne
