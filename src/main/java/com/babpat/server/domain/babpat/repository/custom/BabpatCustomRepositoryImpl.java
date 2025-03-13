@@ -51,6 +51,33 @@ public class BabpatCustomRepositoryImpl implements BabpatCustomRepository {
                 .limit(pageable.getPageSize())
                 .fetch();
 
+        List<BabpatInfoRespDto.BabpatData> babpatDataList = results.stream()
+                .map(tuple -> new BabpatInfoRespDto.BabpatData(
+                        new BabpatInfoRespDto.RestaurantInfo(
+                                tuple.get(restaurant.name),
+                                String.valueOf(tuple.get(restaurant.menus)),
+                                parsingCategories(tuple.get(restaurant.category1), tuple.get(restaurant.category2)),
+                                tuple.get(restaurant.thumbnail)
+                        ),
+                        new BabpatInfoRespDto.BabpatInfo(
+                                tuple.get(babpat.id),
+                                tuple.get(babpat.comment),
+                                new BabpatInfoRespDto.Capacity(
+                                        Optional.ofNullable(tuple.get(babpat.headCount)).orElse(0),
+                                        countParticipation(tuple.get(babpat.id))
+                                ),
+                                tuple.get(babpat.mealSpeed),
+                                tuple.get(babpat.patDate),
+                                tuple.get(babpat.patTime),
+                                new BabpatInfoRespDto.LeaderProfile(
+                                        tuple.get(member.name),
+                                        tuple.get(member.nickname),
+                                        tuple.get(member.track)
+                                )
+                        )
+                ))
+                .toList();
+
         JPAQuery<Long> countQuery = jpaQueryFactory
                 .select(babpat.count())
                 .from(babpat)
@@ -61,35 +88,8 @@ public class BabpatCustomRepositoryImpl implements BabpatCustomRepository {
                 )
                 .leftJoin(babpat.restaurant, restaurant);
 
-        List<BabpatInfoRespDto> content = results.stream()
-                .map(tuple -> new BabpatInfoRespDto(
-                        List.of(new BabpatInfoRespDto.BabpatData(
-                                new BabpatInfoRespDto.RestaurantInfo(
-                                        tuple.get(restaurant.name),
-                                        String.valueOf(tuple.get(restaurant.menus)),
-                                        parsingCategories(tuple.get(restaurant.category1), tuple.get(restaurant.category2)),
-                                        tuple.get(restaurant.thumbnail)
-                                ),
-                                new BabpatInfoRespDto.BabpatInfo(
-                                        tuple.get(babpat.id),
-                                        tuple.get(babpat.comment),
-                                        new BabpatInfoRespDto.Capacity(
-                                                Optional.ofNullable(tuple.get(babpat.headCount)).orElse(0),
-                                                countParticipation(tuple.get(babpat.id))
-                                        ),
-                                        tuple.get(babpat.mealSpeed),
-                                        tuple.get(babpat.patDate),
-                                        tuple.get(babpat.patTime),
-                                        new BabpatInfoRespDto.LeaderProfile(
-                                                tuple.get(member.name),
-                                                tuple.get(member.nickname),
-                                                tuple.get(member.track)
-                                        )
-                                )
-                        )))
-                ).toList();
-
-        return PageableExecutionUtils.getPage(content, pageable, countQuery::fetchOne);
+        List<BabpatInfoRespDto> responseDtoList = List.of(new BabpatInfoRespDto(babpatDataList));
+        return PageableExecutionUtils.getPage(responseDtoList, pageable, countQuery::fetchOne);
     }
 
     private BooleanExpression keywordEq(String keywordCond) {
