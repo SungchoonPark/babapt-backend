@@ -58,7 +58,7 @@ public class BabpatController {
     }
 
     @DeleteMapping("/post/{babpatId}")
-    public ResponseEntity<ApiResponse<Void>> applyBabpat(
+    public ResponseEntity<ApiResponse<Void>> deleteBabpat(
             @PathVariable Long babpatId,
             @AuthenticationPrincipal PrincipalDetails principalDetails
     ) {
