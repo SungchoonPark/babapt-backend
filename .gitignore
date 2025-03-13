@@ -37,22 +37,10 @@ out/
 .vscode/
 
 ### 설정 파일 ###
-# 모든 YML/YAML 파일 무시
-**/*.yml
-**/*.yaml
-**/*.properties
-
-### 민감한 정보 ###
-**/application*.yml
-**/application*.yaml
-**/application*.properties
-**/bootstrap*.yml
-**/bootstrap*.yaml
-**/bootstrap*.properties
-**/credentials.json
-**/*secret*
-**/*credential*
-**/keystore*
+application.yml
+application-local.yml
+application-prod.yml
+application-dev.yml
 
 ### 로그 파일 ###
 logs/
