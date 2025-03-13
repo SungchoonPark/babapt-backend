@@ -63,4 +63,12 @@ public class Babpat extends BaseEntity {
         this.babpatStatus = BabpatStatus.ONGOING;
     }
 
+    public void updateDelete() {
+        this.babpatStatus = BabpatStatus.DELETED;
+    }
+
+    public boolean isValidMember(String username) {
+        return this.member.isSameUsername(username);
+    }
+
 }

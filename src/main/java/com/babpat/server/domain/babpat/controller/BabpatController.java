@@ -57,4 +57,14 @@ public class BabpatController {
         return ResponseEntity.ok().body(ApiResponse.createSuccessWithNoContent(CustomResponseStatus.SUCCESS_WITH_NO_CONTENT.withMessage("밥팟 신청이 완료되었습니다.")));
     }
 
+    @DeleteMapping("/post/{babpatId}")
+    public ResponseEntity<ApiResponse<Void>> applyBabpat(
+            @PathVariable Long babpatId,
+            @AuthenticationPrincipal PrincipalDetails principalDetails
+    ) {
+        babpatCommandService.delete(babpatId, principalDetails.getUsername());
+
+        return ResponseEntity.ok().body(ApiResponse.createSuccessWithNoContent(CustomResponseStatus.SUCCESS_WITH_NO_CONTENT.withMessage("밥팟이 삭제되었습니다.")));
+    }
+
 }
