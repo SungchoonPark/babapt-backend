@@ -1,5 +1,6 @@
 package com.babpat.server.domain.babpat.controller;
 
+import com.babpat.server.config.security.member.PrincipalDetails;
 import com.babpat.server.domain.babpat.dto.request.BabpatApplyRequest;
 import com.babpat.server.domain.babpat.dto.request.BabpatPostReqDto;
 import com.babpat.server.domain.babpat.dto.request.SearchCond;
@@ -15,6 +16,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -36,8 +38,11 @@ public class BabpatController {
     }
 
     @PostMapping("/post")
-    public ResponseEntity<ApiResponse<Void>> postBabpat(@RequestBody @Valid BabpatPostReqDto babpatPostReqDto) {
-        babpatCommandService.postBabpat(babpatPostReqDto);
+    public ResponseEntity<ApiResponse<Void>> postBabpat(
+            @RequestBody @Valid BabpatPostReqDto babpatPostReqDto,
+            @AuthenticationPrincipal PrincipalDetails principalDetails
+    ) {
+        babpatCommandService.postBabpat(babpatPostReqDto, principalDetails.getUsername());
 
         return ResponseEntity.ok().body(ApiResponse.createSuccessWithNoContent(CustomResponseStatus.SUCCESS_WITH_NO_CONTENT));
     }

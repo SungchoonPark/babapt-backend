@@ -26,10 +26,7 @@ public class ParticipationCommandServiceImpl implements ParticipationCommandServ
     private final BabpatRepository babpatRepository;
 
     @Override
-    public void registerParticipation(Babpat babpat, BabpatPostReqDto babpatPostReqDto) {
-        Member leader = memberRepository.findById(babpatPostReqDto.leader())
-                .orElseThrow(() -> new CustomException(CustomResponseStatus.MEMBER_NOT_EXIST));
-
+    public void registerParticipation(Babpat babpat, Member leader) {
         Participation participation = Participation.builder()
                 .member(leader)
                 .babpat(babpat)
