@@ -31,6 +31,7 @@ public class SecurityConfig {
     private final JwtUtil jwtUtil;
     private final RedisUtil redisUtil;
 
+    @Bean
     CorsConfigurationSource corsConfigurationSource() {
         return request -> {
             CorsConfiguration config = new CorsConfiguration();
