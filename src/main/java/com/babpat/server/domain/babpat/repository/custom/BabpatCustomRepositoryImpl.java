@@ -7,6 +7,7 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.support.PageableExecutionUtils;
@@ -40,7 +41,8 @@ public class BabpatCustomRepositoryImpl implements BabpatCustomRepository {
                 .join(babpat.restaurant, restaurant)
                 .where(
                         foodEq(searchCond.foodCond()),
-                        peopleEq(searchCond.peopleCond())
+                        peopleEq(searchCond.peopleCond()),
+                        keywordEq(searchCond.keywordCond())
                 )
                 .orderBy(babpat.createdAt.desc())
                 .offset(pageable.getOffset())
@@ -52,7 +54,8 @@ public class BabpatCustomRepositoryImpl implements BabpatCustomRepository {
                 .from(babpat)
                 .where(
                         foodEq(searchCond.foodCond()),
-                        peopleEq(searchCond.peopleCond())
+                        peopleEq(searchCond.peopleCond()),
+                        keywordEq(searchCond.keywordCond())
                 )
                 .leftJoin(babpat.restaurant, restaurant);
 
@@ -85,6 +88,13 @@ public class BabpatCustomRepositoryImpl implements BabpatCustomRepository {
                 ).toList();
 
         return PageableExecutionUtils.getPage(content, pageable, countQuery::fetchOne);
+    }
+
+    private BooleanExpression keywordEq(String keywordCond) {
+        if (StringUtils.isBlank(keywordCond)) {
+            return null;
+        }
+        return babpat.comment.containsIgnoreCase(keywordCond);
     }
 
     private BooleanExpression foodEq(List<String> foodCond) {

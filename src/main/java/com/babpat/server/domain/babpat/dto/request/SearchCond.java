@@ -4,6 +4,7 @@ import java.util.List;
 
 public record SearchCond(
         List<String> foodCond,
-        List<Integer> peopleCond
+        List<Integer> peopleCond,
+        String keywordCond
 ) {
 }
