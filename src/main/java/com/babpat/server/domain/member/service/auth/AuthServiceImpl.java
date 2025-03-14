@@ -7,7 +7,7 @@ import com.babpat.server.config.jwt.dto.TokenInfo;
 import com.babpat.server.config.jwt.enums.TokenType;
 import com.babpat.server.domain.member.dto.request.SignInRequestDto;
 import com.babpat.server.domain.member.dto.request.SignupRequestDto;
-import com.babpat.server.domain.member.dto.response.SignInResponseDto;
+import com.babpat.server.domain.member.dto.response.SignInResult;
 import com.babpat.server.domain.member.entity.Member;
 import com.babpat.server.domain.member.entity.enums.RoleType;
 import com.babpat.server.domain.member.entity.enums.Track;
@@ -48,7 +48,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public SignInResponseDto login(SignInRequestDto signInRequestDto) {
+    public SignInResult login(SignInRequestDto signInRequestDto) {
         Member validMember = memberRepository.findByUsername(signInRequestDto.id())
                 .orElseThrow(() -> new CustomException(CustomResponseStatus.MEMBER_NOT_EXIST));
 
@@ -62,7 +62,7 @@ public class AuthServiceImpl implements AuthService {
             redisUtil.setData(RT + validMember.getId(), refreshToken, jwtUtil.getExpiration(TokenType.REFRESH_TOKEN));
         }
 
-        return new SignInResponseDto(
+        return new SignInResult(
                 validMember.getId(),
                 validMember.getName(),
                 validMember.getNickname(),
