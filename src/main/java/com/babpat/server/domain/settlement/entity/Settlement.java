@@ -30,6 +30,9 @@ public class Settlement extends BaseEntity {
     private Babpat babpat;
 
     @NotNull
+    private Integer memberCount;
+
+    @NotNull
     private Integer totalPrice;
 
     @NotNull

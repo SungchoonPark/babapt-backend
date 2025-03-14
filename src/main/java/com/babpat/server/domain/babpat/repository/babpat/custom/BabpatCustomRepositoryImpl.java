@@ -1,4 +1,4 @@
-package com.babpat.server.domain.babpat.repository.custom;
+package com.babpat.server.domain.babpat.repository.babpat.custom;
 
 import com.babpat.server.domain.babpat.dto.request.SearchCond;
 import com.babpat.server.domain.babpat.dto.response.BabpatInfoRespDto;

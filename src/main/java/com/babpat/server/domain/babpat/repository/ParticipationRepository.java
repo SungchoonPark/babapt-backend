@@ -1,6 +1,7 @@
 package com.babpat.server.domain.babpat.repository;
 
 import com.babpat.server.domain.babpat.entity.Participation;
+import com.babpat.server.domain.babpat.repository.participation.custom.ParticipationCustomRepository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -8,7 +9,7 @@ import org.springframework.data.repository.query.Param;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-public interface ParticipationRepository extends JpaRepository<Participation, Long> {
+public interface ParticipationRepository extends JpaRepository<Participation, Long>, ParticipationCustomRepository {
     @Query("""
         SELECT COUNT(p) > 0 
         FROM Participation p
@@ -28,4 +29,6 @@ public interface ParticipationRepository extends JpaRepository<Participation, Lo
     boolean existsByBabpatIdAndMemberId(Long babpatId, Long memberId);
 
     Long countByBabpatId(Long babpatId);
+
+
 }

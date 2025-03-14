@@ -5,7 +5,7 @@ import com.babpat.server.common.exception.CustomException;
 import com.babpat.server.domain.babpat.dto.request.SearchCond;
 import com.babpat.server.domain.babpat.dto.response.BabpatInfoRespDto;
 import com.babpat.server.domain.babpat.entity.Babpat;
-import com.babpat.server.domain.babpat.repository.BabpatRepository;
+import com.babpat.server.domain.babpat.repository.babpat.BabpatRepository;
 import com.babpat.server.domain.babpat.repository.ParticipationRepository;
 import com.babpat.server.domain.babpat.service.babpat.BabpatQueryService;
 import com.babpat.server.domain.member.entity.Member;

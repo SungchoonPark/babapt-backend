@@ -5,7 +5,7 @@ import com.babpat.server.common.exception.CustomException;
 import com.babpat.server.domain.babpat.dto.request.BabpatApplyRequest;
 import com.babpat.server.domain.babpat.dto.request.BabpatPostReqDto;
 import com.babpat.server.domain.babpat.entity.Babpat;
-import com.babpat.server.domain.babpat.repository.BabpatRepository;
+import com.babpat.server.domain.babpat.repository.babpat.BabpatRepository;
 import com.babpat.server.domain.babpat.service.babpat.BabpatCommandService;
 import com.babpat.server.domain.babpat.service.babpat.BabpatQueryService;
 import com.babpat.server.domain.babpat.service.participation.ParticipationCommandService;
