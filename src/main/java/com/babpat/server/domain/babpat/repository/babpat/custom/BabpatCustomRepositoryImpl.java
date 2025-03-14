@@ -51,8 +51,8 @@ public class BabpatCustomRepositoryImpl implements BabpatCustomRepository {
                 .limit(pageable.getPageSize())
                 .fetch();
 
-        List<BabpatInfoRespDto.BabpatData> babpatDataList = results.stream()
-                .map(tuple -> new BabpatInfoRespDto.BabpatData(
+        List<BabpatInfoRespDto> babpatDataList = results.stream()
+                .map(tuple -> new BabpatInfoRespDto(
                         new BabpatInfoRespDto.RestaurantInfo(
                                 tuple.get(restaurant.name),
                                 String.valueOf(tuple.get(restaurant.menus)),
@@ -84,12 +84,13 @@ public class BabpatCustomRepositoryImpl implements BabpatCustomRepository {
                 .where(
                         foodEq(searchCond.foodCond()),
                         peopleEq(searchCond.peopleCond()),
-                        keywordEq(searchCond.keywordCond())
+                        keywordEq(searchCond.keywordCond()),
+                        babpat.babpatStatus.in(BabpatStatus.ONGOING, BabpatStatus.FULL)
                 )
                 .leftJoin(babpat.restaurant, restaurant);
 
-        List<BabpatInfoRespDto> responseDtoList = List.of(new BabpatInfoRespDto(babpatDataList));
-        return PageableExecutionUtils.getPage(responseDtoList, pageable, countQuery::fetchOne);
+        // BabpatData 리스트를 직접 페이지네이션
+        return PageableExecutionUtils.getPage(babpatDataList, pageable, countQuery::fetchOne);
     }
 
     private BooleanExpression keywordEq(String keywordCond) {

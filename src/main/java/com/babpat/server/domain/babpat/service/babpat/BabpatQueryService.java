@@ -7,8 +7,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface BabpatQueryService {
-    BabpatInfoRespDto getBabpat();
-
     Babpat getBabpatDetail(Long babpatId);
 
     Page<BabpatInfoRespDto> getBabpatWithPaging(SearchCond searchCond, Pageable pageable);
