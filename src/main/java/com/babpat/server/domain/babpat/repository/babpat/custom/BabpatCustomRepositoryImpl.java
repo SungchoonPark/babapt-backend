@@ -1,4 +1,4 @@
-package com.babpat.server.domain.babpat.repository.custom;
+package com.babpat.server.domain.babpat.repository.babpat.custom;
 
 import com.babpat.server.domain.babpat.dto.request.SearchCond;
 import com.babpat.server.domain.babpat.dto.response.BabpatInfoRespDto;
@@ -51,45 +51,46 @@ public class BabpatCustomRepositoryImpl implements BabpatCustomRepository {
                 .limit(pageable.getPageSize())
                 .fetch();
 
+        List<BabpatInfoRespDto> babpatDataList = results.stream()
+                .map(tuple -> new BabpatInfoRespDto(
+                        new BabpatInfoRespDto.RestaurantInfo(
+                                tuple.get(restaurant.name),
+                                String.valueOf(tuple.get(restaurant.menus)),
+                                parsingCategories(tuple.get(restaurant.category1), tuple.get(restaurant.category2)),
+                                tuple.get(restaurant.thumbnail)
+                        ),
+                        new BabpatInfoRespDto.BabpatInfo(
+                                tuple.get(babpat.id),
+                                tuple.get(babpat.comment),
+                                new BabpatInfoRespDto.Capacity(
+                                        Optional.ofNullable(tuple.get(babpat.headCount)).orElse(0),
+                                        countParticipation(tuple.get(babpat.id))
+                                ),
+                                tuple.get(babpat.mealSpeed),
+                                tuple.get(babpat.patDate),
+                                tuple.get(babpat.patTime),
+                                new BabpatInfoRespDto.LeaderProfile(
+                                        tuple.get(member.name),
+                                        tuple.get(member.nickname),
+                                        tuple.get(member.track)
+                                )
+                        )
+                ))
+                .toList();
+
         JPAQuery<Long> countQuery = jpaQueryFactory
                 .select(babpat.count())
                 .from(babpat)
                 .where(
                         foodEq(searchCond.foodCond()),
                         peopleEq(searchCond.peopleCond()),
-                        keywordEq(searchCond.keywordCond())
+                        keywordEq(searchCond.keywordCond()),
+                        babpat.babpatStatus.in(BabpatStatus.ONGOING, BabpatStatus.FULL)
                 )
                 .leftJoin(babpat.restaurant, restaurant);
 
-        List<BabpatInfoRespDto> content = results.stream()
-                .map(tuple -> new BabpatInfoRespDto(
-                        List.of(new BabpatInfoRespDto.BabpatData(
-                                new BabpatInfoRespDto.RestaurantInfo(
-                                        tuple.get(restaurant.name),
-                                        String.valueOf(tuple.get(restaurant.menus)),
-                                        parsingCategories(tuple.get(restaurant.category1), tuple.get(restaurant.category2)),
-                                        tuple.get(restaurant.thumbnail)
-                                ),
-                                new BabpatInfoRespDto.BabpatInfo(
-                                        tuple.get(babpat.id),
-                                        tuple.get(babpat.comment),
-                                        new BabpatInfoRespDto.Capacity(
-                                                Optional.ofNullable(tuple.get(babpat.headCount)).orElse(0),
-                                                countParticipation(tuple.get(babpat.id))
-                                        ),
-                                        tuple.get(babpat.mealSpeed),
-                                        tuple.get(babpat.patDate),
-                                        tuple.get(babpat.patTime),
-                                        new BabpatInfoRespDto.LeaderProfile(
-                                                tuple.get(member.name),
-                                                tuple.get(member.nickname),
-                                                tuple.get(member.track)
-                                        )
-                                )
-                        )))
-                ).toList();
-
-        return PageableExecutionUtils.getPage(content, pageable, countQuery::fetchOne);
+        // BabpatData 리스트를 직접 페이지네이션
+        return PageableExecutionUtils.getPage(babpatDataList, pageable, countQuery::fetchOne);
     }
 
     private BooleanExpression keywordEq(String keywordCond) {

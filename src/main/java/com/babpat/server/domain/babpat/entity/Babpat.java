@@ -23,7 +23,6 @@ import java.time.LocalTime;
 public class Babpat extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "babpat_id")
     private Long id;
 
     @ManyToOne
@@ -65,6 +64,10 @@ public class Babpat extends BaseEntity {
 
     public void updateDelete() {
         this.babpatStatus = BabpatStatus.DELETED;
+    }
+
+    public void updateFinish() {
+        this.babpatStatus = BabpatStatus.FINISHED;
     }
 
     public boolean isValidMember(String username) {

@@ -37,7 +37,12 @@ public class SecurityConfig {
             CorsConfiguration config = new CorsConfiguration();
             config.setAllowedHeaders(Collections.singletonList("*"));
             config.setAllowedMethods(Collections.singletonList("*"));
-            config.setAllowedOriginPatterns(Arrays.asList("http://localhost:3000", "https://www.babpat.com")); // ⭐️ 허용할 origin
+            config.setAllowedOriginPatterns(Arrays.asList(
+                    "http://localhost:3000",
+                    "https://www.babpat.com",
+                    "https://babpat.com/",
+                    "https://dev.babpat.com"
+            )); // ⭐️ 허용할 origin
             config.setAllowCredentials(true);
             return config;
         };
