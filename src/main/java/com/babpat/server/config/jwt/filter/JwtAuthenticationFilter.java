@@ -76,6 +76,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 "/favicon.ico"
         };
         String path = request.getRequestURI();
+        String method = request.getMethod(); // GET, POST, PUT, DELETE 등
+
+        if (path.startsWith("/api/v1/babpat/post") && method.equalsIgnoreCase("POST")) {
+            return false;
+        }
+
         return Arrays.stream(excludePath).anyMatch(path::startsWith);
     }
 }
