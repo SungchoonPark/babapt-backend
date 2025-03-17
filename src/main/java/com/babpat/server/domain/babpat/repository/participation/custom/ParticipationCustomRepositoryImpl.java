@@ -16,13 +16,13 @@ public class ParticipationCustomRepositoryImpl implements ParticipationCustomRep
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
-    public List<Member> getParticipationMembersWithoutLeader(Long babpatId, Long leaderId) {
+    public List<Member> getParticipationMembersWithoutRequester(Long babpatId, Long requesterId) {
         return jpaQueryFactory
                 .select(participation.member)
                 .from(participation)
                 .where(
                         participation.babpat.id.eq(babpatId),
-                        participation.member.id.ne(leaderId)
+                        participation.member.id.ne(requesterId)
                 )
                 .join(participation.member, member)
                 .fetch();

@@ -35,7 +35,7 @@ public class SettlementCommandServiceImpl implements SettlementCommandService {
         Babpat validBabpat = babpatRepository.findById(postSettlementRequest.babpatId())
                 .orElseThrow(() -> new CustomException(CustomResponseStatus.BABPAT_NOT_EXIST));
 
-        Member validMember = memberRepository.findByUsername(authUsername)
+        Member requester = memberRepository.findByUsername(authUsername)
                 .orElseThrow(() -> new CustomException(CustomResponseStatus.MEMBER_NOT_EXIST));
 
         if (!validBabpat.isValidMember(authUsername)) {
@@ -44,8 +44,8 @@ public class SettlementCommandServiceImpl implements SettlementCommandService {
 
         validBabpat.updateFinish();
 
-        Settlement savedSettlement = settlementRepository.save(postSettlementRequest.toEntity(validBabpat, validMember));
-        payerRepository.saveAll(createPayers(validBabpat, validMember, savedSettlement));
+        Settlement savedSettlement = settlementRepository.save(postSettlementRequest.toEntity(validBabpat, requester));
+        payerRepository.saveAll(createPayers(validBabpat, requester, savedSettlement));
     }
 
     @Override
@@ -63,9 +63,8 @@ public class SettlementCommandServiceImpl implements SettlementCommandService {
         }
     }
 
-
-    private List<Payer> createPayers(Babpat validBabpat, Member validMember, Settlement savedSettlement) {
-        List<Member> payers = participationRepository.getParticipationMembersWithoutLeader(validBabpat.getId(), validMember.getId());
+    private List<Payer> createPayers(Babpat validBabpat, Member requester, Settlement savedSettlement) {
+        List<Member> payers = participationRepository.getParticipationMembersWithoutRequester(validBabpat.getId(), requester.getId());
         return payers.stream()
                 .map(payer -> Payer.builder()
                         .settlement(savedSettlement)
