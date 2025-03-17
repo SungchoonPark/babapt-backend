@@ -9,11 +9,11 @@ import java.util.List;
 public record SettlementInfo(
         Long babpatId,
         String restaurantName,
-        LocalDateTime settlementAt,
+        LocalDateTime babpatAt,
         SettlementStatus settlementStatus,
-        List<PayerInfo> payers
+        List<ParticipationInfo> participants // participations 로 변수명 변경
 ) {
-    public record PayerInfo(
+    public record ParticipationInfo(
             String nickname,
             String name,
             Track track

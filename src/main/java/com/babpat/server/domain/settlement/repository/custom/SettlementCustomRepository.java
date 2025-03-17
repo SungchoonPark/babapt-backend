@@ -5,5 +5,5 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface SettlementCustomRepository {
-    Page<SettlementInfo> getSettlementStates(Long memberId, Pageable pageable);
+    Page<SettlementInfo> getBabpatSettlementStates(Long memberId, Pageable pageable);
 }
