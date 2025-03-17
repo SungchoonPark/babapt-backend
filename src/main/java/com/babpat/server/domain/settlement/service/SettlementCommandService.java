@@ -4,4 +4,6 @@ import com.babpat.server.domain.settlement.dto.request.PostSettlementRequest;
 
 public interface SettlementCommandService {
     void postSettlement(PostSettlementRequest postSettlementRequest, String authUsername);
+
+    void payComplete(Long settlementId, String payerUsername);
 }

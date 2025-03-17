@@ -34,7 +34,7 @@ public class BabpatCustomRepositoryImpl implements BabpatCustomRepository {
         List<Tuple> results = jpaQueryFactory
                 .select(
                         babpat.id, babpat.comment, babpat.headCount, babpat.patDate, babpat.patTime, babpat.mealSpeed,
-                        member.name, member.nickname, member.track,
+                        member.id, member.name, member.nickname, member.track,
                         restaurant.name, restaurant.menus, restaurant.category1, restaurant.category2, restaurant.thumbnail
                 )
                 .from(babpat)
@@ -70,6 +70,7 @@ public class BabpatCustomRepositoryImpl implements BabpatCustomRepository {
                                 tuple.get(babpat.patDate),
                                 tuple.get(babpat.patTime),
                                 new BabpatInfoRespDto.LeaderProfile(
+                                        tuple.get(member.id),
                                         tuple.get(member.name),
                                         tuple.get(member.nickname),
                                         tuple.get(member.track)

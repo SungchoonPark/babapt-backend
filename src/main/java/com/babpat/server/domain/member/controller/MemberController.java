@@ -19,8 +19,8 @@ import org.springframework.web.bind.annotation.*;
 public class MemberController {
     private final MemberQueryService memberQueryService;
 
-    @GetMapping("/me")
-    public ResponseEntity<ApiResponse<MemberInfoResponse>> checkIdExists(
+    @GetMapping()
+    public ResponseEntity<ApiResponse<MemberInfoResponse>> getMemberInfo(
             @AuthenticationPrincipal PrincipalDetails principalDetails
     ) {
         MemberInfoResponse response = memberQueryService.getMemberInfo(principalDetails.getUsername());

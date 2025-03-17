@@ -2,7 +2,11 @@ package com.babpat.server.domain.settlement.repository.custom;
 
 import com.babpat.server.domain.member.entity.QMember;
 import com.babpat.server.domain.settlement.dto.response.SettlementInfo;
+import com.babpat.server.domain.settlement.entity.enums.SettlementStatus;
 import com.querydsl.core.Tuple;
+import com.querydsl.core.group.GroupBy;
+import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -12,11 +16,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.babpat.server.domain.babpat.entity.QBabpat.babpat;
+import static com.babpat.server.domain.babpat.entity.QParticipation.participation;
 import static com.babpat.server.domain.member.entity.QMember.member;
 import static com.babpat.server.domain.restaurant.entity.QRestaurant.restaurant;
 import static com.babpat.server.domain.settlement.dto.response.SettlementInfo.*;
@@ -30,85 +34,72 @@ public class SettlementCustomRepositoryImpl implements SettlementCustomRepositor
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
-    public Page<SettlementInfo> getSettlementStates(Long memberId, Pageable pageable) {
-        // 1. Settlement 데이터 조회
-        List<Tuple> settlementTuples = jpaQueryFactory
+    public Page<SettlementInfo> getBabpatSettlementStates(Long memberId, Pageable pageable) {
+        // 1단계: 멤버가 참여한 고유한 밥팟 ID 리스트 가져오기 (중복 제거)
+        List<Tuple> babpatBasicInfos = jpaQueryFactory
                 .select(
-                        settlement.id,
                         babpat.id,
-                        restaurant.name,
-                        settlement.createdAt,
-                        settlement.settlementStatus
+                        babpat.createdAt
                 )
-                .from(settlement)
-                .join(settlement.babpat, babpat)
-                .join(babpat.restaurant, restaurant)
-                .join(settlement.member, member) // 정산 요청자
-                .where(member.id.eq(memberId))
+                .distinct()
+                .from(participation)
+                .join(participation.babpat, babpat)
+                .where(participation.member.id.eq(memberId))
+                .orderBy(babpat.createdAt.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
-        log.info("Settlements found: {}", settlementTuples.size());
 
-        // Settlement ID 목록 추출
-        List<Long> settlementIds = settlementTuples.stream()
-                .map(tuple -> tuple.get(settlement.id))
-                .toList();
+        // 결과 리스트 초기화
+        List<SettlementInfo> results = new ArrayList<>();
 
-        // Settlement가 없으면 빈 페이지 반환
-        if (settlementIds.isEmpty()) {
-            return Page.empty(pageable);
+        // 각 밥팟에 대해 상세 정보 조회
+        for (Tuple babpatBasicInfo : babpatBasicInfos) {
+            Long babpatId = babpatBasicInfo.get(babpat.id);
+
+            // 2단계: 밥팟 상세 정보 (레스토랑, 정산 상태)
+            Tuple babpatDetailInfo = jpaQueryFactory
+                    .select(
+                            restaurant.name,
+                            settlement.settlementStatus.coalesce(SettlementStatus.BEFORE)
+                    )
+                    .from(babpat)
+                    .leftJoin(babpat.restaurant, restaurant)
+                    .leftJoin(settlement)
+                    .on(settlement.babpat.eq(babpat))
+                    .where(babpat.id.eq(babpatId))
+                    .fetchOne();
+
+            // 3단계: 밥팟 참여자 정보
+            List<ParticipationInfo> participants = jpaQueryFactory
+                    .select(Projections.constructor(
+                            ParticipationInfo.class,
+                            member.nickname,
+                            member.name,
+                            member.track
+                    ))
+                    .from(participation)
+                    .join(participation.member, member)
+                    .where(participation.babpat.id.eq(babpatId))
+                    .fetch();
+
+            // 4단계: SettlementInfo 객체 생성 및 결과 추가
+            results.add(new SettlementInfo(
+                    babpatId,
+                    babpatDetailInfo.get(restaurant.name),
+                    babpatBasicInfo.get(babpat.createdAt),
+                    babpatDetailInfo.get(settlement.settlementStatus.coalesce(SettlementStatus.BEFORE)),
+                    participants
+            ));
         }
 
-        // 2. Payer 정보 조회
-        QMember payerMember = new QMember("payerMember");
-
-        List<Tuple> payerTuples = jpaQueryFactory
-                .select(
-                        settlement.id,
-                        payerMember.nickname,
-                        payerMember.name,
-                        payerMember.track
-                )
-                .from(payer)
-                .join(payer.member, payerMember) // 별칭 적용
-                .join(payer.settlement, settlement)
-                .where(settlement.id.in(settlementIds))
-                .fetch();
-
-        // 3. Payer 정보를 Settlement ID 기준으로 그룹핑
-        Map<Long, List<PayerInfo>> payerMap = payerTuples.stream()
-                .collect(Collectors.groupingBy(
-                        tuple -> tuple.get(settlement.id),
-                        Collectors.mapping(tuple -> new PayerInfo(
-                                tuple.get(payerMember.nickname),
-                                tuple.get(payerMember.name),
-                                tuple.get(payerMember.track)
-                        ), Collectors.toList())
-                ));
-
-        // 4. SettlementInfo 최종적으로 생성
-        List<SettlementInfo> settlements = settlementTuples.stream()
-                .map(tuple -> new SettlementInfo(
-                        tuple.get(babpat.id),
-                        tuple.get(restaurant.name),
-                        tuple.get(settlement.createdAt),
-                        tuple.get(settlement.settlementStatus),
-                        payerMap.getOrDefault(tuple.get(settlement.id), List.of()) // Payer 정보 추가
-                ))
-                .toList();
-
-        // 5. 총 개수 조회 쿼리 (페이징 최적화)
+        // 총 개수 쿼리 (distinct 사용)
         JPAQuery<Long> countQuery = jpaQueryFactory
-                .select(settlement.count())
-                .from(settlement)
-                .join(settlement.member, member)
-                .where(member.id.eq(memberId));
+                .select(babpat.countDistinct())
+                .from(participation)
+                .join(participation.babpat, babpat)
+                .where(participation.member.id.eq(memberId));
 
-        return PageableExecutionUtils.getPage(
-                settlements,  // SettlementInfo 리스트를 직접 반환
-                pageable,
-                countQuery::fetchOne
-        );
+        return PageableExecutionUtils.getPage(results, pageable, countQuery::fetchOne);
     }
 }

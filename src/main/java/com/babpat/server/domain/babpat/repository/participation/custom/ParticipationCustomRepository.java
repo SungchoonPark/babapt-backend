@@ -5,5 +5,5 @@ import com.babpat.server.domain.member.entity.Member;
 import java.util.List;
 
 public interface ParticipationCustomRepository {
-    List<Member> getParticipationMembersWithoutLeader(Long babpatId, Long leaderId);
+    List<Member> getParticipationMembersWithoutRequester(Long babpatId, Long requesterId);
 }
