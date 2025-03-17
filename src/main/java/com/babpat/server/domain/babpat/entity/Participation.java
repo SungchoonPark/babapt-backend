@@ -1,6 +1,8 @@
 package com.babpat.server.domain.babpat.entity;
 
 import com.babpat.server.common.model.BaseEntity;
+import com.babpat.server.domain.babpat.entity.enums.ParticipationStatus;
+import com.babpat.server.domain.member.entity.Member;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -16,12 +18,19 @@ import org.hibernate.annotations.DynamicInsert;
 public class Participation extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "participation_id")
     private Long id;
 
+    @ManyToOne
+    @JoinColumn(name = "member_id")
     @NotNull
-    private Long memberId;
+    private Member member;
 
+    @ManyToOne
+    @JoinColumn(name = "babpat_id")
     @NotNull
-    private Long babpatId;
+    private Babpat babpat;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status")
+    private ParticipationStatus participationStatus;
 }

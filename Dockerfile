@@ -22,6 +22,9 @@ ENV SERVER_PORT=8080
 ENV DB_URL=${DB_URL}
 ENV DB_USERNAME=${DB_USERNAME}
 ENV DB_PASSWORD=${DB_PASSWORD}
+ENV REDIS_HOST=${REDIS_HOST}
+ENV REDIS_PORT=${REDIS_PORT}
+
 
 # 빌드된 JAR 파일을 실행용 컨테이너로 복사
 COPY --from=builder /app/build/libs/*.jar app.jar

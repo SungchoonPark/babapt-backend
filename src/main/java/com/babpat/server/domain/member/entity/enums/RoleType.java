@@ -8,7 +8,6 @@ public enum RoleType {
     ROLE_ADMIN;
 
     public static RoleType fromString(String value) {
-        System.out.println("value = " + value);
         for (RoleType role : RoleType.values()) {
             if (role.name().equalsIgnoreCase(value)) {
                 return role;

@@ -73,7 +73,6 @@ yarn-error.log
 ### 기타 빌드 결과물 ###
 /target/
 *.class
-*.jar
 *.war
 *.ear
 *.zip

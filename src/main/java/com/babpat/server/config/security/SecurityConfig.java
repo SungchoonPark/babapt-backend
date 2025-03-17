@@ -31,12 +31,18 @@ public class SecurityConfig {
     private final JwtUtil jwtUtil;
     private final RedisUtil redisUtil;
 
+    @Bean
     CorsConfigurationSource corsConfigurationSource() {
         return request -> {
             CorsConfiguration config = new CorsConfiguration();
             config.setAllowedHeaders(Collections.singletonList("*"));
             config.setAllowedMethods(Collections.singletonList("*"));
-            config.setAllowedOriginPatterns(Arrays.asList("http://localhost:3000", "https://www.babpat.com")); // ⭐️ 허용할 origin
+            config.setAllowedOriginPatterns(Arrays.asList(
+                    "http://localhost:3000",
+                    "https://www.babpat.com",
+                    "https://babpat.com/",
+                    "https://dev.babpat.com"
+            )); // ⭐️ 허용할 origin
             config.setAllowCredentials(true);
             return config;
         };
@@ -60,7 +66,9 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/api/v1/auth/reissue",
                                 "/api/v1/auth/register",
+                                "/api/v1/auth/duplicate",
                                 "/api/v1/auth/login",
+                                "/api/v1/babpat/post",
                                 "/favicon.ico"
                         )
                         .permitAll()  // 인증 없이 접근 가능한 URI 추가

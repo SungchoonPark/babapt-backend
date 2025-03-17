@@ -19,7 +19,6 @@ import org.hibernate.annotations.DynamicInsert;
 @Table(name = "member")
 public class Member extends BaseEntity {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "member_id")
     private Long id;
 
     @NotNull
@@ -45,4 +44,8 @@ public class Member extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "role")
     private RoleType role;
+
+    public boolean isSameUsername(String username) {
+        return this.username.equals(username);
+    }
 }

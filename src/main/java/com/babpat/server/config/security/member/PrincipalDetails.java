@@ -1,7 +1,6 @@
 package com.babpat.server.config.security.member;
 
 import com.babpat.server.domain.member.entity.Member;
-import com.babpat.server.domain.member.entity.enums.RoleType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.GrantedAuthority;
@@ -30,7 +29,7 @@ public class PrincipalDetails implements UserDetails {
 
     @Override
     public String getUsername() {
-        return member.getName();
+        return member.getUsername();
     }
 
     @Override

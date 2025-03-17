@@ -8,13 +8,9 @@ import java.time.LocalTime;
 import java.util.List;
 
 public record BabpatInfoRespDto(
-        List<BabpatData> babpats
+        RestaurantInfo restaurantInfo,
+        BabpatInfo babpatInfo
 ) {
-    public record BabpatData(
-            RestaurantInfo restaurantInfo,
-            BabpatInfo babpatInfo
-    ) {}
-
     public record RestaurantInfo(
             String name,
             String mainMenus,

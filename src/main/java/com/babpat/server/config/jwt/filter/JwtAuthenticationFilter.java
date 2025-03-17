@@ -72,9 +72,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 "/api/v1/auth/register",
                 "/api/v1/auth/login",
                 "/api/v1/auth/duplicate",
+                "/api/v1/babpat/post",
                 "/favicon.ico"
         };
         String path = request.getRequestURI();
+        String method = request.getMethod(); // GET, POST, PUT, DELETE 등
+
+        if (path.startsWith("/api/v1/babpat/post") && method.equalsIgnoreCase("POST")) {
+            return false;
+        }
+
         return Arrays.stream(excludePath).anyMatch(path::startsWith);
     }
 }

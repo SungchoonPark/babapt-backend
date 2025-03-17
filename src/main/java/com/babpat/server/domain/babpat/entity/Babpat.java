@@ -1,7 +1,10 @@
 package com.babpat.server.domain.babpat.entity;
 
+import com.babpat.server.domain.babpat.entity.enums.BabpatStatus;
 import com.babpat.server.domain.babpat.entity.enums.MealSpeed;
 import com.babpat.server.common.model.BaseEntity;
+import com.babpat.server.domain.member.entity.Member;
+import com.babpat.server.domain.restaurant.entity.Restaurant;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -20,14 +23,17 @@ import java.time.LocalTime;
 public class Babpat extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "babpat_id")
     private Long id;
 
+    @ManyToOne
+    @JoinColumn(name = "leader_id")
     @NotNull
-    private Long leaderId;
+    private Member member;
 
+    @ManyToOne
+    @JoinColumn(name = "restaurant_id")
     @NotNull
-    private Long restaurantId;
+    private Restaurant restaurant;
 
     @NotNull
     private String comment;
@@ -43,4 +49,29 @@ public class Babpat extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     private MealSpeed mealSpeed;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status")
+    private BabpatStatus babpatStatus;
+
+    public void updateFull() {
+        this.babpatStatus = BabpatStatus.FULL;
+    }
+
+    public void updateOngoing() {
+        this.babpatStatus = BabpatStatus.ONGOING;
+    }
+
+    public void updateDelete() {
+        this.babpatStatus = BabpatStatus.DELETED;
+    }
+
+    public void updateFinish() {
+        this.babpatStatus = BabpatStatus.FINISHED;
+    }
+
+    public boolean isValidMember(String username) {
+        return this.member.isSameUsername(username);
+    }
+
 }
