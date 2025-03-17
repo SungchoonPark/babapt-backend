@@ -46,4 +46,15 @@ public class SettlementController {
     }
 
     // 밥팟 알림 불러오기
+
+    // 돈보내기 API
+    @PatchMapping("/{settlementId}")
+    public ResponseEntity<ApiResponse<Page<SettlementInfo>>> getSettlements(
+            @PathVariable Long settlementId,
+            @AuthenticationPrincipal PrincipalDetails principalDetails
+    ) {
+        commandService.payComplete(settlementId, principalDetails.getUsername());
+
+        return ResponseEntity.ok().body(ApiResponse.createSuccessWithNoContent(CustomResponseStatus.SUCCESS.withMessage("정산 처리 완료되었습니다.")));
+    }
 }

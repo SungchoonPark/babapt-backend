@@ -31,4 +31,8 @@ public class Payer extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @NotNull
     private PayerStatus payerStatus;
+
+    public void payComplete() {
+        this.payerStatus = PayerStatus.PAID;
+    }
 }
