@@ -38,10 +38,6 @@ public class SettlementCommandServiceImpl implements SettlementCommandService {
         Member requester = memberRepository.findByUsername(authUsername)
                 .orElseThrow(() -> new CustomException(CustomResponseStatus.MEMBER_NOT_EXIST));
 
-        if (!validBabpat.isValidMember(authUsername)) {
-            throw new CustomException(CustomResponseStatus.ACCESS_DENIED);
-        }
-
         validBabpat.updateFinish();
 
         Settlement savedSettlement = settlementRepository.save(postSettlementRequest.toEntity(validBabpat, requester));
