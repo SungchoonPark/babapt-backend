@@ -34,6 +34,7 @@ public record BabpatInfoRespDto(
     ) {}
 
     public record LeaderProfile(
+            Long leaderId,
             String name,
             String nickname,
             Track track

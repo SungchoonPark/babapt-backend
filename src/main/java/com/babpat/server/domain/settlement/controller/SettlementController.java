@@ -37,13 +37,13 @@ public class SettlementController {
         return ResponseEntity.ok().body(ApiResponse.createSuccessWithNoContent(CustomResponseStatus.SUCCESS_WITH_NO_CONTENT.withMessage("정산 요청이 완료되었습니다.")));
     }
 
-    // 내 밥팟 정산 현황 조회
+    // 내가 참여하고 있는 밥팟의 정산 정보 조회
     @GetMapping()
     public ResponseEntity<ApiResponse<Page<SettlementInfo>>> getSettlements(
             @AuthenticationPrincipal PrincipalDetails principalDetails,
             @PageableDefault(size = 10) Pageable pageable
     ) {
-        Page<SettlementInfo> response = queryService.getSettlementStates(principalDetails.getUsername(), pageable);
+        Page<SettlementInfo> response = queryService.getBabpatSettlementStates(principalDetails.getUsername(), pageable);
 
         return ResponseEntity.ok().body(ApiResponse.createSuccess(response, CustomResponseStatus.SUCCESS.withMessage("정산 현황 조회에 성공하였습니다.")));
     }

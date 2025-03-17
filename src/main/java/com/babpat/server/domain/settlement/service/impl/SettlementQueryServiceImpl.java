@@ -26,12 +26,11 @@ public class SettlementQueryServiceImpl implements SettlementQueryService {
     private final MemberRepository memberRepository;
 
     @Override
-    public Page<SettlementInfo> getSettlementStates(String authUsername, Pageable pageable) {
-        // Todo : 기능개발
+    public Page<SettlementInfo> getBabpatSettlementStates(String authUsername, Pageable pageable) {
         Member validMember = memberRepository.findByUsername(authUsername)
                 .orElseThrow(() -> new CustomException(CustomResponseStatus.MEMBER_NOT_EXIST));
 
-        return settlementRepository.getSettlementStates(validMember.getId(), pageable);
+        return settlementRepository.getBabpatSettlementStates(validMember.getId(), pageable);
     }
 
     @Override
