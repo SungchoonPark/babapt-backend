@@ -50,4 +50,8 @@ public class Settlement extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @NotNull
     private SettlementStatus settlementStatus;
+
+    public void completeSettlement() {
+        this.settlementStatus = SettlementStatus.COMPLETED;
+    }
 }

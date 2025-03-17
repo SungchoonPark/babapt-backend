@@ -14,10 +14,11 @@ public enum CustomResponseStatus {
 
     REFRESH_TOKEN_NOT_FOUND(HttpStatus.NOT_FOUND.value(), "리프레시 토큰을 찾을 수 없습니다."),
     MEMBER_NOT_EXIST(HttpStatus.NOT_FOUND.value(), "존재하지 않는 회원정보 입니다. 아이디와 비밀번호를 확인해주세요."),
+    SETTLEMENT_NOT_EXIST(HttpStatus.NOT_FOUND.value(), "존재하지 않는 정산정보 입니다."),
     LOGOUT_MEMBER(HttpStatus.NOT_FOUND.value(), "로그아웃 되었습니다. 다시 로그인을 진행해주세요."),
     MEMBER_ALREADY_EXIST(HttpStatus.CONFLICT.value(), "이미 존재하는 회원 정보입니다. 로그인을 이용해주세요."),
     RESTAURANT_NOT_EXIST(HttpStatus.NOT_FOUND.value(), "존재하지 않는 식당입니다."),
-    BABPAT_ALREADY_EXIST(HttpStatus.CONFLICT.value(), "이미 밥팟에 참여하고 있습니다."),
+    BABPAT_ALREADY_EXIST(HttpStatus.CONFLICT.value(), "해당 시간에 이미 밥팟을 참여하고 있습니다"),
     BABPAT_NOT_EXIST(HttpStatus.NOT_FOUND.value(), "존재하지 않는 밥팟입니다."),
 
     ACCESS_DENIED(HttpStatus.FORBIDDEN.value(), "권한이 없습니다."),

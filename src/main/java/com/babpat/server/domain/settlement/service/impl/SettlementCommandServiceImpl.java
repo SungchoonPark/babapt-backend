@@ -48,6 +48,21 @@ public class SettlementCommandServiceImpl implements SettlementCommandService {
         payerRepository.saveAll(createPayers(validBabpat, validMember, savedSettlement));
     }
 
+    @Override
+    public void payComplete(Long settlementId, String payerUsername) {
+        Settlement validSettlement = settlementRepository.findById(settlementId)
+                .orElseThrow(() -> new CustomException(CustomResponseStatus.SETTLEMENT_NOT_EXIST));
+
+        Payer payer = payerRepository.findBySettlementIdAndUsername(validSettlement.getId(), payerUsername)
+                .orElseThrow(() -> new CustomException(CustomResponseStatus.SETTLEMENT_NOT_EXIST));
+
+        payer.payComplete();
+
+        if (payerRepository.isSettlementComplete(validSettlement.getId())) {
+            validSettlement.completeSettlement();
+        }
+    }
+
 
     private List<Payer> createPayers(Babpat validBabpat, Member validMember, Settlement savedSettlement) {
         List<Member> payers = participationRepository.getParticipationMembersWithoutLeader(validBabpat.getId(), validMember.getId());
