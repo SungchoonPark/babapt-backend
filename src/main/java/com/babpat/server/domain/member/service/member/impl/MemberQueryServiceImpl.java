@@ -15,7 +15,7 @@ public class MemberQueryServiceImpl implements MemberQueryService {
     private final MemberRepository memberRepository;
     @Override
     public IdCheckRespDto isExistId(IdCheckRequestDto requestDto) {
-        boolean isExist = memberRepository.existsByUsername(requestDto.id());
+        boolean isExist = memberRepository.existsByUsername(requestDto.username());
         return new IdCheckRespDto(isExist);
     }
 }
