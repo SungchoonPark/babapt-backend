@@ -2,8 +2,10 @@ package com.babpat.server.domain.babpat.repository.babpat.custom;
 
 import com.babpat.server.domain.babpat.dto.request.SearchCond;
 import com.babpat.server.domain.babpat.dto.response.BabpatInfoRespDto;
+import com.babpat.server.domain.babpat.dto.response.PartBabpatId;
 import com.babpat.server.domain.babpat.entity.enums.BabpatStatus;
 import com.querydsl.core.Tuple;
+import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -16,6 +18,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.util.CollectionUtils;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -92,6 +95,17 @@ public class BabpatCustomRepositoryImpl implements BabpatCustomRepository {
 
         // BabpatData 리스트를 직접 페이지네이션
         return PageableExecutionUtils.getPage(babpatDataList, pageable, countQuery::fetchOne);
+    }
+
+    @Override
+    public PartBabpatId getParticipatingBabpat(String authUsername) {
+        List<Long> result = jpaQueryFactory
+                .select(participation.babpat.id)
+                .from(participation)
+                .where(participation.member.username.eq(authUsername))
+                .fetch();
+
+        return new PartBabpatId(Optional.ofNullable(result).orElseGet(Collections::emptyList));
     }
 
     private BooleanExpression keywordEq(String keywordCond) {

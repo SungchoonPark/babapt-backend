@@ -7,6 +7,7 @@ import com.babpat.server.domain.babpat.dto.request.SearchCond;
 import com.babpat.server.domain.babpat.dto.response.BabpatInfoRespDto;
 import com.babpat.server.common.dto.ApiResponse;
 import com.babpat.server.common.enums.CustomResponseStatus;
+import com.babpat.server.domain.babpat.dto.response.PartBabpatId;
 import com.babpat.server.domain.babpat.service.babpat.BabpatCommandService;
 import com.babpat.server.domain.babpat.service.babpat.BabpatQueryService;
 import jakarta.validation.Valid;
@@ -18,6 +19,8 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/babpat")
@@ -33,6 +36,15 @@ public class BabpatController {
             @PageableDefault(size = 12) Pageable pageable
     ) {
         Page<BabpatInfoRespDto> response = babpatQueryService.getBabpatWithPaging(searchCond, pageable);
+
+        return ResponseEntity.ok().body(ApiResponse.createSuccess(response, CustomResponseStatus.SUCCESS));
+    }
+
+    @GetMapping("/participating")
+    public ResponseEntity<ApiResponse<PartBabpatId>> getParticipatingBabpat(
+            @AuthenticationPrincipal PrincipalDetails principalDetails
+    ) {
+        PartBabpatId response = babpatQueryService.getParticipatingBabpats(principalDetails.getUsername());
 
         return ResponseEntity.ok().body(ApiResponse.createSuccess(response, CustomResponseStatus.SUCCESS));
     }
