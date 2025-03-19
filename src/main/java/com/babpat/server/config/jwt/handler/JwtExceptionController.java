@@ -15,7 +15,6 @@ public class JwtExceptionController {
 
     @RequestMapping(value = "/entrypoint/nullToken")
     public void nullTokenException() {
-        System.out.println("공백" );
         throw new CustomException(CustomResponseStatus.NULL_JWT);
     }
 
