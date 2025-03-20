@@ -17,10 +17,7 @@ import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.CollectionUtils;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static com.babpat.server.domain.babpat.entity.QBabpat.babpat;
 import static com.babpat.server.domain.babpat.entity.QParticipation.participation;
@@ -54,6 +51,25 @@ public class BabpatCustomRepositoryImpl implements BabpatCustomRepository {
                 .limit(pageable.getPageSize())
                 .fetch();
 
+        Map<Long, List<BabpatInfoRespDto.JoinMemberProfile>> maps = new HashMap<>();
+        for (Tuple result : results) {
+            List<BabpatInfoRespDto.JoinMemberProfile> babpatJoiners = jpaQueryFactory.select(
+                            Projections.constructor(
+                                    BabpatInfoRespDto.JoinMemberProfile.class,
+                                    member.id,
+                                    member.name,
+                                    member.nickname,
+                                    member.track
+                            )
+                    )
+                    .from(participation)
+                    .join(participation.member, member)
+                    .where(participation.babpat.id.eq(result.get(babpat.id)))
+                    .fetch();
+
+            maps.put(result.get(babpat.id), babpatJoiners);
+        }
+
         List<BabpatInfoRespDto> babpatDataList = results.stream()
                 .map(tuple -> new BabpatInfoRespDto(
                         new BabpatInfoRespDto.RestaurantInfo(
@@ -77,7 +93,8 @@ public class BabpatCustomRepositoryImpl implements BabpatCustomRepository {
                                         tuple.get(member.name),
                                         tuple.get(member.nickname),
                                         tuple.get(member.track)
-                                )
+                                ),
+                                maps.get(tuple.get(babpat.id))
                         )
                 ))
                 .toList();

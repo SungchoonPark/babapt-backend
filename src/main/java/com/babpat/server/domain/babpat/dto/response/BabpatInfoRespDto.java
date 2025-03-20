@@ -25,7 +25,8 @@ public record BabpatInfoRespDto(
             MealSpeed mealSpeed,
             LocalDate date,
             LocalTime time,
-            LeaderProfile leaderProfile
+            LeaderProfile leaderProfile,
+            List<JoinMemberProfile> joinMemberProfiles
     ) {}
 
     public record Capacity(
@@ -35,6 +36,13 @@ public record BabpatInfoRespDto(
 
     public record LeaderProfile(
             Long leaderId,
+            String name,
+            String nickname,
+            Track track
+    ) {}
+
+    public record JoinMemberProfile(
+            Long id,
             String name,
             String nickname,
             Track track
