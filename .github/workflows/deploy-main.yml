@@ -3,7 +3,7 @@ name: Build GCE Image for Auto-Scale
 on:
   push:
     branches:
-      - hotfix/auto-scale
+      - main
 
 jobs:
   build-gce-image:
