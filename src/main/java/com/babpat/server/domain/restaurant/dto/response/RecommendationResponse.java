@@ -1,4 +1,4 @@
-package com.babpat.server.domain.restaurant.dto;
+package com.babpat.server.domain.restaurant.dto.response;
 
 import java.util.List;
 

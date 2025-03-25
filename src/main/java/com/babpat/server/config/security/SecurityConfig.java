@@ -69,6 +69,7 @@ public class SecurityConfig {
                                 "/api/v1/auth/duplicate",
                                 "/api/v1/auth/login",
                                 "/api/v1/babpat/post",
+                                "/api/v1/restaurants/*",
                                 "/favicon.ico"
                         )
                         .permitAll()  // 인증 없이 접근 가능한 URI 추가

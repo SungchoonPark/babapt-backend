@@ -4,6 +4,7 @@ import com.babpat.server.domain.babpat.dto.request.SearchCond;
 import com.babpat.server.domain.babpat.dto.response.BabpatInfoRespDto;
 import com.babpat.server.domain.babpat.dto.response.PartBabpatId;
 import com.babpat.server.domain.babpat.entity.enums.BabpatStatus;
+import com.babpat.server.domain.restaurant.dto.response.RestaurantInfo;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -72,7 +73,7 @@ public class BabpatCustomRepositoryImpl implements BabpatCustomRepository {
 
         List<BabpatInfoRespDto> babpatDataList = results.stream()
                 .map(tuple -> new BabpatInfoRespDto(
-                        new BabpatInfoRespDto.RestaurantInfo(
+                        new RestaurantInfo(
                                 tuple.get(restaurant.name),
                                 String.valueOf(tuple.get(restaurant.menus)),
                                 parsingCategories(tuple.get(restaurant.category1), tuple.get(restaurant.category2)),

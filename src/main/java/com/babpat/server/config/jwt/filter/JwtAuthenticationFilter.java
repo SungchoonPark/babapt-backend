@@ -62,10 +62,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
     }
 
-    private void handleException(HttpServletRequest request, CustomResponseStatus status) {
-        request.setAttribute(EXCEPTION, status.getMessage());
-    }
-
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
         String[] excludePath = {
@@ -74,6 +70,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 "/api/v1/auth/login",
                 "/api/v1/auth/duplicate",
                 "/api/v1/babpat/post",
+                "/api/v1/restaurants",
                 "/favicon.ico"
         };
         String path = request.getRequestURI();
