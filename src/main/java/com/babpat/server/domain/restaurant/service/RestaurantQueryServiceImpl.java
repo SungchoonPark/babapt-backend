@@ -2,10 +2,13 @@ package com.babpat.server.domain.restaurant.service;
 
 import com.babpat.server.common.enums.CustomResponseStatus;
 import com.babpat.server.common.exception.CustomException;
-import com.babpat.server.domain.restaurant.dto.RecommendationResponse;
+import com.babpat.server.domain.restaurant.dto.response.RecommendationResponse;
+import com.babpat.server.domain.restaurant.dto.response.RestaurantInfo;
 import com.babpat.server.domain.restaurant.entity.Restaurant;
 import com.babpat.server.domain.restaurant.repository.RestaurantRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -15,8 +18,10 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class RestaurantService {
+public class RestaurantQueryServiceImpl implements RestaurantQueryService {
+
     private final RestaurantRepository restaurantRepository;
+    @Override
     public RecommendationResponse getRecommendationRestaurants() {
         List<Long> ids = List.of(92L, 130L, 20L, 12L);
         List<RecommendationResponse.RestaurantInfo> restaurantInfos = new ArrayList<>();
@@ -38,6 +43,11 @@ public class RestaurantService {
         }
 
         return new RecommendationResponse(restaurantInfos);
+    }
+
+    @Override
+    public Page<RestaurantInfo> searchRestaurant(String keyword, Pageable pageable) {
+        return restaurantRepository.findRestaurantHasName(keyword, pageable);
     }
 
     private List<String> parsingCategories(String category1, String category2) {
