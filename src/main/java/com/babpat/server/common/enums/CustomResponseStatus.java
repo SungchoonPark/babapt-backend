@@ -23,7 +23,7 @@ public enum CustomResponseStatus {
 
     ACCESS_DENIED(HttpStatus.FORBIDDEN.value(), "권한이 없습니다."),
     EXPIRED_JWT(HttpStatus.UNAUTHORIZED.value(), "만료된 토큰입니다."),
-    NULL_JWT(HttpStatus.NO_CONTENT.value(),  "토큰이 공백입니다."),
+    NULL_JWT(HttpStatus.NO_CONTENT.value(),  "토큰이 공백입니다.."),
 
     BAD_JWT(HttpStatus.UNAUTHORIZED.value(), "잘못된 토큰입니다."),
     REFRESH_TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED.value(), "리프레시 토큰이 만료되었습니다. 재로그인을 진행해주세요."),
