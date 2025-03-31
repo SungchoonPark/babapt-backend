@@ -3,6 +3,7 @@ name: Deploy Spring Boot App with Gradle and Docker
 on:
   push:
     branches:
+      - main
       - develop
 
 jobs:
