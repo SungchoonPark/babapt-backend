@@ -7,12 +7,13 @@ import com.babpat.server.domain.babpat.entity.Babpat;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import java.util.List;
-
 public interface BabpatQueryService {
-    Babpat getBabpatDetail(Long babpatId);
 
-    Page<BabpatInfoRespDto> getBabpatWithPaging(SearchCond searchCond, Pageable pageable);
+  Babpat getBabpatDetail(Long babpatId);
 
-    PartBabpatId getParticipatingBabpats(String authUsername);
+  Page<BabpatInfoRespDto> getBabpatWithPaging(SearchCond searchCond, Pageable pageable);
+
+  PartBabpatId getParticipatingBabpats(String authUsername);
+
+  Page<BabpatInfoRespDto> getMemberParticipationBabpat(String authUsername, Pageable pageable);
 }
