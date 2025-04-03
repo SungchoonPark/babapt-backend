@@ -41,6 +41,7 @@ public class BabpatController {
       @ModelAttribute SearchCond searchCond,
       @PageableDefault(size = 12) Pageable pageable
   ) {
+    System.out.println("searchCond = " + searchCond);
     Page<BabpatInfoRespDto> response = babpatQueryService.getBabpatWithPaging(searchCond, pageable);
 
     return ResponseEntity.ok()
