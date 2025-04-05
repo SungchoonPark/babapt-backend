@@ -41,8 +41,19 @@ public class BabpatController {
       @ModelAttribute SearchCond searchCond,
       @PageableDefault(size = 12) Pageable pageable
   ) {
-    System.out.println("searchCond = " + searchCond);
     Page<BabpatInfoRespDto> response = babpatQueryService.getBabpatWithPaging(searchCond, pageable);
+
+    return ResponseEntity.ok()
+        .body(ApiResponse.createSuccess(response, CustomResponseStatus.SUCCESS));
+  }
+
+  @GetMapping("/post/participation")
+  public ResponseEntity<ApiResponse<Page<BabpatInfoRespDto>>> getMemberParticipationBabpat(
+      @AuthenticationPrincipal PrincipalDetails principalDetails,
+      @PageableDefault(size = 12) Pageable pageable
+  ) {
+    Page<BabpatInfoRespDto> response = babpatQueryService.getMemberParticipationBabpat(
+        principalDetails.getUsername(), pageable);
 
     return ResponseEntity.ok()
         .body(ApiResponse.createSuccess(response, CustomResponseStatus.SUCCESS));
@@ -64,7 +75,6 @@ public class BabpatController {
       @RequestBody @Valid BabpatPostReqDto babpatPostReqDto,
       @AuthenticationPrincipal PrincipalDetails principalDetails
   ) {
-    System.out.println("babpatPostReqDto = " + babpatPostReqDto);
     babpatCommandService.postBabpat(babpatPostReqDto, principalDetails.getUsername());
 
     return ResponseEntity.ok()
