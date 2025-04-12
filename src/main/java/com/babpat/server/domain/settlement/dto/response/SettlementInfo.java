@@ -10,10 +10,11 @@ public record SettlementInfo(
     String restaurantName,
     LocalDateTime babpatAt,
     SettlementStatus settlementStatus,
-    List<ParticipationInfo> payers // participations 로 변수명 변경
+    List<ParticipationInfo> payers
 ) {
 
   public record ParticipationInfo(
+      Long id,
       String nickname,
       String name,
       Track track
