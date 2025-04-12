@@ -18,7 +18,8 @@ public record BabpatPostReqDto(
     @NotNull Integer headCount,
     @NotBlank String comment,
     String mealSpeed,
-    @NotBlank String patType
+    @NotBlank String patType,
+    @NotBlank String meetPlace
 ) {
 
   public Babpat toBabpat(Member leader, Restaurant restaurant) {
@@ -32,6 +33,7 @@ public record BabpatPostReqDto(
         .mealSpeed(mealSpeed == null ? null : MealSpeed.fromString(mealSpeed))
         .babpatStatus(BabpatStatus.ONGOING)
         .patType(PatType.fromString(patType))
+        .meetPlace(meetPlace)
         .build();
   }
 }

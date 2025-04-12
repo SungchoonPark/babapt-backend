@@ -76,6 +76,9 @@ public class Babpat extends BaseEntity {
   @NotNull
   private PatType patType;
 
+  @NotNull
+  private String meetPlace;
+
   public void updateFull() {
     this.babpatStatus = BabpatStatus.FULL;
   }
