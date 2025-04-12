@@ -41,7 +41,7 @@ public class BabpatCustomRepositoryImpl implements BabpatCustomRepository {
     List<Tuple> results = jpaQueryFactory
         .select(
             babpat.id, babpat.comment, babpat.headCount, babpat.patDate, babpat.patTime,
-            babpat.mealSpeed,
+            babpat.mealSpeed, babpat.patType,
             member.id, member.name, member.nickname, member.track,
             restaurant.name, restaurant.menus, restaurant.category1, restaurant.category2,
             restaurant.thumbnail
@@ -98,6 +98,7 @@ public class BabpatCustomRepositoryImpl implements BabpatCustomRepository {
                 tuple.get(babpat.mealSpeed),
                 tuple.get(babpat.patDate),
                 tuple.get(babpat.patTime),
+                tuple.get(babpat.patType),
                 new BabpatInfoRespDto.LeaderProfile(
                     tuple.get(member.id),
                     tuple.get(member.name),
@@ -183,6 +184,7 @@ public class BabpatCustomRepositoryImpl implements BabpatCustomRepository {
                 tuple.get(babpat.mealSpeed),
                 tuple.get(babpat.patDate),
                 tuple.get(babpat.patTime),
+                tuple.get(babpat.patType),
                 new BabpatInfoRespDto.LeaderProfile(
                     tuple.get(member.id),
                     tuple.get(member.name),
@@ -234,7 +236,7 @@ public class BabpatCustomRepositoryImpl implements BabpatCustomRepository {
   }
 
   private BooleanExpression patEq(String patCond) {
-    if (patCond.isBlank()) {
+    if (patCond == null || patCond.isBlank()) {
       return null;
     }
 
