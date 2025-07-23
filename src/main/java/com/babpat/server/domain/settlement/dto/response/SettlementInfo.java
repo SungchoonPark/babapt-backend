@@ -13,11 +13,12 @@ public record SettlementInfo(
     List<ParticipationInfo> payers // participations 로 변수명 변경
 ) {
 
-  public record ParticipationInfo(
-      String nickname,
-      String name,
-      Track track
-  ) {
+    public record ParticipationInfo(
+        String nickname,
+        String name,
+        Track track,
+        Long babpatId
+    ) {
 
-  }
+    }
 }
