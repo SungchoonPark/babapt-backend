@@ -1,17 +1,31 @@
 package com.babpat.server.domain.babpat.entity;
 
+import com.babpat.server.common.model.BaseEntity;
 import com.babpat.server.domain.babpat.entity.enums.BabpatStatus;
 import com.babpat.server.domain.babpat.entity.enums.MealSpeed;
-import com.babpat.server.common.model.BaseEntity;
+import com.babpat.server.domain.babpat.entity.enums.PatType;
 import com.babpat.server.domain.member.entity.Member;
 import com.babpat.server.domain.restaurant.entity.Restaurant;
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
-import lombok.*;
-import org.hibernate.annotations.DynamicInsert;
-
 import java.time.LocalDate;
 import java.time.LocalTime;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import org.hibernate.annotations.DynamicInsert;
 
 @Entity
 @Getter
@@ -21,57 +35,68 @@ import java.time.LocalTime;
 @DynamicInsert
 @Table(name = "babpat")
 public class Babpat extends BaseEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "leader_id")
-    @NotNull
-    private Member member;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "restaurant_id")
-    @NotNull
-    private Restaurant restaurant;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "leader_id")
+  @NotNull
+  private Member member;
 
-    @NotNull
-    private String comment;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "restaurant_id")
+  @NotNull
+  private Restaurant restaurant;
 
-    @NotNull
-    private Integer headCount;
+  @NotNull
+  private String comment;
 
-    @NotNull
-    private LocalDate patDate;
+  @NotNull
+  private Integer headCount;
 
-    @NotNull
-    private LocalTime patTime;
+  @NotNull
+  private LocalDate patDate;
 
-    @Enumerated(EnumType.STRING)
-    private MealSpeed mealSpeed;
+  @NotNull
+  private LocalTime patTime;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "status")
-    private BabpatStatus babpatStatus;
+  @Enumerated(EnumType.STRING)
+  @NotNull
+  private MealSpeed mealSpeed;
 
-    public void updateFull() {
-        this.babpatStatus = BabpatStatus.FULL;
-    }
+  @Enumerated(EnumType.STRING)
+  @Column(name = "status")
+  @NotNull
+  private BabpatStatus babpatStatus;
 
-    public void updateOngoing() {
-        this.babpatStatus = BabpatStatus.ONGOING;
-    }
+  @Enumerated(EnumType.STRING)
+  @Column(name = "type")
+  @NotNull
+  private PatType patType;
 
-    public void updateDelete() {
-        this.babpatStatus = BabpatStatus.DELETED;
-    }
+  @NotNull
+  private String meetPlace;
 
-    public void updateFinish() {
-        this.babpatStatus = BabpatStatus.FINISHED;
-    }
+  public void updateFull() {
+    this.babpatStatus = BabpatStatus.FULL;
+  }
 
-    public boolean isValidMember(String username) {
-        return this.member.isSameUsername(username);
-    }
+  public void updateOngoing() {
+    this.babpatStatus = BabpatStatus.ONGOING;
+  }
+
+  public void updateDelete() {
+    this.babpatStatus = BabpatStatus.DELETED;
+  }
+
+  public void updateFinish() {
+    this.babpatStatus = BabpatStatus.FINISHED;
+  }
+
+  public boolean isValidMember(String username) {
+    return this.member.isSameUsername(username);
+  }
 
 }

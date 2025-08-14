@@ -1,7 +1,6 @@
 package com.babpat.server.config.jwt.handler;
 
 import com.babpat.server.common.enums.CustomResponseStatus;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -19,9 +18,8 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
      * 해당 클래스는 Authentication 즉, 인증이 실패했을 때 거쳐가는 클래스이다.
      */
     @Override
-    public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
+    public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException {
         String exception = (String) request.getAttribute("exception");
-        log.error("exception : " + exception);
 
         /**
          * 토큰 없는 경우
