@@ -8,6 +8,7 @@ import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -23,8 +24,6 @@ import org.springframework.web.filter.OncePerRequestFilter;
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-  private static final String EXCEPTION = "exception";
-  private static final String AUTHORIZATION = "Authorization";
   private static final String LOGOUT = "LOGOUT";
 
   private final JwtUtil jwtUtil;
@@ -33,7 +32,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
   @Override
   protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
       FilterChain filterChain) throws ServletException, IOException {
-    String resolveToken = jwtUtil.resolveToken(request.getHeader(AUTHORIZATION));
+    String resolveToken = extractTokenFromCookies(request, "accessToken");
 
     if (Objects.equals(resolveToken, "")) {
       request.getRequestDispatcher("/exception/entrypoint/nullToken").forward(request, response);
@@ -53,14 +52,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     filterChain.doFilter(request, response);
-  }
-
-  // 로그아웃한 사용자가 접근하는지 파악. -> 접근할경우 예외발생
-  private void handleBlacklistedToken(String resolveToken) throws CustomException {
-    String redisLogoutValue = redisUtil.getData(resolveToken);
-    if (redisLogoutValue != null && redisLogoutValue.equals(LOGOUT)) {
-      throw new CustomException(CustomResponseStatus.LOGOUT_MEMBER);
-    }
   }
 
   @Override
@@ -86,5 +77,25 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     return Arrays.stream(excludePath).anyMatch(path::startsWith);
+  }
+
+  // 로그아웃한 사용자가 접근하는지 파악. -> 접근할경우 예외발생
+  private void handleBlacklistedToken(String resolveToken) throws CustomException {
+    String redisLogoutValue = redisUtil.getData(resolveToken);
+    if (redisLogoutValue != null && redisLogoutValue.equals(LOGOUT)) {
+      throw new CustomException(CustomResponseStatus.LOGOUT_MEMBER);
+    }
+  }
+
+  private String extractTokenFromCookies(HttpServletRequest request, String cookieName) {
+    if (request.getCookies() == null) {
+      return null;
+    }
+
+    return Arrays.stream(request.getCookies())
+        .filter(cookie -> cookie.getName().equals(cookieName))
+        .map(Cookie::getValue)
+        .findFirst()
+        .orElse(null);
   }
 }
