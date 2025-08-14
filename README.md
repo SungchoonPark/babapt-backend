@@ -1,80 +1,77 @@
-## 필요 환경
+# KakaoTech Bootcamp : 해커톤 대회
 
-- JDK 21
-- MySQL 8버전
-- Intellij Ultimate Version
----
-# ⚙️ 데이터베이스 로컬 설정 ⚙️
-- MySQL 로컬 데이터베이스에 'babpat'이라는 데이터베이스가 존재해야 함 (workbench 상에서 아래의 쿼리 실행 -> 맥 기준 `command + enter` 하면 실행됩니다.)
+## 팀원 구성 및 역할
 
-```sql
-CREATE DATABASE babpat;
+| 이름 | 직무 | 역할 |
+| --- | --- | --- |
+| 🙇‍♂ noah.kim(김지호) | 팀장<br>풀스택 / 프론트엔드 | - 카카오지도 기반 전체 서비스 제작<br>- 피그마 기반 서비스 디자인 |
+| mumu.park(박성춘) | 풀스택 / 백엔드 | - springboot 기반 API 서버 개발 및 데이터베이스 구축 |
+| kane.park(박건) | 풀스택 / 백엔드 | - FastAPI 기반 AI 서버 구축 및 개발 |
+| yuna.lee(이유나) | 클라우드 <br>(Devops) | - 서비스 아키텍쳐 설계 및 구축 |
+| noah.kim(김다현) | AI | - 챗봇 AI 서비스 개발 및 파인튜닝 |
+| joy.yoon(윤지원) | AI | - 데이터 크롤링 챗봇 AI 서비스 개발 |
+<br>
 
-USE babpat;
+## 진행기간 
+25.02.26. (수) ~ 25.02.28 (금) - 총 3일
 
-CREATE USER 'babpat'@'localhost' IDENTIFIED BY 'babpat1!';
+## 목차 <a name = "index"></a>
 
-GRANT ALL ON babpat.* TO 'babpat'@'localhost';
-
-FLUSH PRIVILEGES;
-```
-
-설명
-- `CREATE USER 'babpat'@'localhost' IDENTIFIED BY 'babpat1!';` 에서 `babpat` 및 `babpat1!` 은 `username` 및 `password` 이므로 원하시는대로 진행하시면 됩니다.
-- `GRANT ALL ON babpat.* TO 'babpat'@'localhost';` 여기서 `TO` 다음 `babpat`의 경우 위의 줄에서 `'babpat'`과 똑같이 적어주시면 됩니다.
-- 저 sql문을 그대로 실행하면 똑같은 환경에서 진행할 수 있습니다. (추천)
-
-</br></br>
-
-# ⚙️ 인텔리제이 환경 설정 ⚙️
-JDK 21을 로컬에 설치한 후 인텔리제이의 다음 설정을 확인합니다.
-
-### 1. Project structure (단축키 : `command + ;`) 
-- SDK 항목을 `21`로 맞추시면 됩니다. (꼭 화면의 값과 똑같지 않으셔도 됩니다.)
-<img src="https://github.com/user-attachments/assets/86ff2061-b59f-4fc9-914b-bc7769d89cab" width="600">
-</br>
-
-### 2. Java Compiler (단축키 : `command + ,`)
-- `command + ,` 후 검색창에 java compiler 를 검색하시면 됩니다.
-- Java Compiler의 버전을 21로 해주시면 됩니다.
-<img src="https://github.com/user-attachments/assets/1289f81e-c397-4d4a-9785-0d749051aeaa" width="600">
-</br>
-
-### 3. Gradle JVM (단축키 : `command + ,`)
-- `command + ,` 후 검색창에 gradle 검색하시면 됩니다.
-- Gradle JVM을 `corretto-21` 로 해주시면 됩니다.
-- 만약 `corretto-21` 이 없다면 아래로 살짝 내려주세요~!
-<img src="https://github.com/user-attachments/assets/256907bc-f45a-41ae-99d6-1986916bc238" width="600">
-</br>
-
->### `corretto-21` 없는경우
->1. Gradle JVM 에서 Download JDK 선택
-><img src="https://github.com/user-attachments/assets/74cdee32-d75c-4668-b9e0-1e2204a7a268" width="500">
->
->2. Version을 21로 해주고 Amazone Corretto 21.0.6 선택후 다운로드
-><img src="https://github.com/user-attachments/assets/b9b53db4-5eba-4608-b84f-e6040d7f9f57" width="500">
-</br></br>
-
-# 🗂️ application.yml 설정파일 추가 🗂️
-- 해당 파일은 gitignore 되어있기 때문에 노션을 참고해주세요. (기능별 메모장 페이지 참조!)
-- 이후 사진의 폴더(`resources`) 아래에 파일(`application.yml`) 추가해주시면 됩니다.
-<img src="https://github.com/user-attachments/assets/adf3a0e5-0254-48b1-a435-cca7990f8beb" width="500">
-</br></br>
-
-# 🏃 클론 진행 🏃
-- 해당 레파지토리를 클론 후 `build.gradle` 파일로 이동 (자동 빌드 될수도 있습니다)
-- 사진상 파란 코끼리 눌러주시면 build 됩니다!
-![image](https://github.com/user-attachments/assets/8b0e5579-a2c8-488e-bc68-2cca7201cfb6)
-</br></br>
-
-# 👏 프로젝트 실행 👏
-- 가장 간단한 방법은 intellij 상단의 실행 버튼(세모버튼) 클릭
-  
-![image](https://github.com/user-attachments/assets/58e5f272-b96c-4ed6-80b7-4cdd6383a055)
+### [1. 서비스 소개](#introduce)
+### [2. 아키텍쳐 및 구현 내용](#project)
+### [3. 결과](#result)
+### [4. 회고](#review)
 
 
 
+## 1. 서비스 소개 <a name = "introduce"></a>
+
+카카오테크 부트캠프 주변의 맛집을 소개하고, 같이 식사할 수 있는 모임인 ‘밥팟’을 모집하고 참여할 수 있는 지도 기반 서비스
+
+### [발표 자료 보러가기](https://docs.google.com/presentation/d/1nALvVPgiVQ4iKfs8G17iWEFI5H2hjbmx/edit?usp=drive_link&ouid=103722667745901978766&rtpof=true&sd=true)
+
+- 스택 : SpringBoot3, Java21, MySQL:9.1.0, JPA, QueryDSL:5.0.0, Redis
+
+### 1.1 메인 화면
+
+<img width="788" height="543" alt="image" src="https://github.com/user-attachments/assets/11d3dd31-213c-47d1-9051-cd832665a1d9" />
 
 
+<img width="788" height="543" alt="image" src="https://github.com/user-attachments/assets/1803845b-74c1-4277-baec-900b1b17a89e" />
 
+<br>
+<br>
+
+## 1.2 밥팟 생성화면
+
+<img width="806" height="518" alt="image" src="https://github.com/user-attachments/assets/2a57eb7d-f8c6-484d-a089-43d0fb8596b0" />
+
+
+<img width="806" height="518" alt="image" src="https://github.com/user-attachments/assets/5118931b-cdf5-4abd-9584-439f4afc3223" />
+
+
+## 2. 아키텍처 및 구현 내용 <a name = "project"></a>
+
+[서비스 아키텍처]
+
+<img width="806" height="500" alt="image" src="https://github.com/user-attachments/assets/c7f2210e-c0ae-475f-b639-379f425b79dc" />
+
+
+**[구현 내용]**
+
+- 밥팟 생성 및 참여, 삭제 기능
+- 회원가입 및 로그인, 토큰 재발급 기능
+- 회원 정보 조회 기능
+- 식당 조회 기능
+- 정산 정보 조회 기능
+
+
+<br>
+
+## 3. 🥈 결과 <a name = "result"></a> 
+
+### 본상 수상 🎉🎉
+<img width="300" height="600" alt="image" src="https://github.com/user-attachments/assets/9925fce8-6871-49a8-adb5-92a5e3b55594" />
+
+## 4. ✏️ 회고 <a name = "review"></a>
 
