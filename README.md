@@ -53,8 +53,7 @@
 ## 2. 아키텍처 및 구현 내용 <a name = "project"></a>
 
 [서비스 아키텍처]
-
-<img width="806" height="500" alt="image" src="https://github.com/user-attachments/assets/c7f2210e-c0ae-475f-b639-379f425b79dc" />
+<img width="941" height="381" alt="image" src="https://github.com/user-attachments/assets/1a14a2cd-5940-41c5-aeb4-64193b88f033" />
 
 
 **[구현 내용]**
